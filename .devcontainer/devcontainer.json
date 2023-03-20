@@ -18,7 +18,7 @@
       "repositories": {
         "ItsJuice/lp-community-bmw-theme-plugin": {
           "permissions": {
-            "issues": "write-all"
+            "issues": "write"
           }
         }
       }
