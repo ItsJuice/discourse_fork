@@ -17,9 +17,7 @@
     "codespaces": {
       "repositories": {
         "ItsJuice/lp-community-bmw-theme-plugin": {
-          "permissions": {
-            "issues": "write"
-          }
+          "permissions": "write-all"
         }
       }
     }
