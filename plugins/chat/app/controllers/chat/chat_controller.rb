@@ -12,15 +12,13 @@ module Chat
     # these endpoints require a standalone find because they need to be
     # able to get deleted channels and recover them.
     before_action :find_chatable, only: %i[enable_chat disable_chat]
-    before_action :find_chat_message,
-                  only: %i[delete restore lookup_message edit_message rebake message_link]
+    before_action :find_chat_message, only: %i[edit_message rebake message_link]
     before_action :set_channel_and_chatable_with_access_check,
                   except: %i[
                     respond
                     enable_chat
                     disable_chat
                     message_link
-                    lookup_message
                     set_user_chat_status
                     dismiss_retention_reminder
                     flag
@@ -92,7 +90,7 @@ module Chat
       raise Discourse::InvalidAccess unless @user_chat_channel_membership
 
       reply_to_msg_id = params[:in_reply_to_id]
-      if reply_to_msg_id
+      if reply_to_msg_id.present?
         rm = Chat::Message.find(reply_to_msg_id)
         raise Discourse::NotFound if rm.chat_channel_id != @chat_channel.id
       end
@@ -107,28 +105,33 @@ module Chat
           content: content,
           staged_id: params[:staged_id],
           upload_ids: params[:upload_ids],
+          thread_id: params[:thread_id],
+          staged_thread_id: params[:staged_thread_id],
         )
 
       return render_json_error(chat_message_creator.error) if chat_message_creator.failed?
 
-      @user_chat_channel_membership.update!(
-        last_read_message_id: chat_message_creator.chat_message.id,
-      )
+      if !chat_message_creator.chat_message.thread_id.present?
+        @user_chat_channel_membership.update!(
+          last_read_message_id: chat_message_creator.chat_message.id,
+        )
+      end
 
       if @chat_channel.direct_message_channel?
         # If any of the channel users is ignoring, muting, or preventing DMs from
-        # the current user then we shold not auto-follow the channel once again or
+        # the current user then we should not auto-follow the channel once again or
         # publish the new channel.
         user_ids_allowing_communication =
           UserCommScreener.new(
             acting_user: current_user,
-            target_user_ids: @chat_channel.user_chat_channel_memberships.pluck(:user_id),
+            target_user_ids:
+              @chat_channel.user_chat_channel_memberships.where(following: false).pluck(:user_id),
           ).allowing_actor_communication
 
         if user_ids_allowing_communication.any?
           Chat::Publisher.publish_new_channel(
             @chat_channel,
-            @chat_channel.chatable.users.where(id: user_ids_allowing_communication),
+            User.where(id: user_ids_allowing_communication),
           )
 
           @chat_channel
@@ -138,11 +141,16 @@ module Chat
         end
       end
 
-      Chat::Publisher.publish_user_tracking_state(
-        current_user,
-        @chat_channel.id,
-        chat_message_creator.chat_message.id,
-      )
+      message =
+        (
+          if chat_message_creator.chat_message.in_thread?
+            Chat::Message.find(@user_chat_channel_membership.last_read_message_id)
+          else
+            chat_message_creator.chat_message
+          end
+        )
+
+      Chat::Publisher.publish_user_tracking_state!(current_user, @chat_channel, message)
       render json: success_json
     end
 
@@ -160,96 +168,6 @@ module Chat
       render json: success_json
     end
 
-    def update_user_last_read
-      membership =
-        Chat::ChannelMembershipManager.new(@chat_channel).find_for_user(
-          current_user,
-          following: true,
-        )
-      raise Discourse::NotFound if membership.nil?
-
-      if membership.last_read_message_id &&
-           params[:message_id].to_i < membership.last_read_message_id
-        raise Discourse::InvalidParameters.new(:message_id)
-      end
-
-      unless Chat::Message.with_deleted.exists?(
-               chat_channel_id: @chat_channel.id,
-               id: params[:message_id],
-             )
-        raise Discourse::NotFound
-      end
-
-      membership.update!(last_read_message_id: params[:message_id])
-
-      Notification
-        .where(notification_type: Notification.types[:chat_mention])
-        .where(user: current_user)
-        .where(read: false)
-        .joins("INNER JOIN chat_mentions ON chat_mentions.notification_id = notifications.id")
-        .joins("INNER JOIN chat_messages ON chat_mentions.chat_message_id = chat_messages.id")
-        .where("chat_messages.id <= ?", params[:message_id].to_i)
-        .where("chat_messages.chat_channel_id = ?", @chat_channel.id)
-        .update_all(read: true)
-
-      Chat::Publisher.publish_user_tracking_state(
-        current_user,
-        @chat_channel.id,
-        params[:message_id],
-      )
-
-      render json: success_json
-    end
-
-    def messages
-      page_size = params[:page_size]&.to_i || 1000
-      direction = params[:direction].to_s
-      message_id = params[:message_id]
-      if page_size > 50 ||
-           (
-             message_id.blank? ^ direction.blank? &&
-               (direction.present? && !CHAT_DIRECTIONS.include?(direction))
-           )
-        raise Discourse::InvalidParameters
-      end
-
-      messages = preloaded_chat_message_query.where(chat_channel: @chat_channel)
-      messages = messages.with_deleted if guardian.can_moderate_chat?(@chatable)
-
-      if message_id.present?
-        condition = direction == PAST ? "<" : ">"
-        messages = messages.where("id #{condition} ?", message_id.to_i)
-      end
-
-      # NOTE: This order is reversed when we return the Chat::View below if the direction
-      # is not FUTURE.
-      order = direction == FUTURE ? "ASC" : "DESC"
-      messages = messages.order("created_at #{order}, id #{order}").limit(page_size).to_a
-
-      can_load_more_past = nil
-      can_load_more_future = nil
-
-      if direction == FUTURE
-        can_load_more_future = messages.size == page_size
-      elsif direction == PAST
-        can_load_more_past = messages.size == page_size
-      else
-        # When direction is blank, we'll return the latest messages.
-        can_load_more_future = false
-        can_load_more_past = messages.size == page_size
-      end
-
-      chat_view =
-        Chat::View.new(
-          chat_channel: @chat_channel,
-          chat_messages: direction == FUTURE ? messages : messages.reverse,
-          user: current_user,
-          can_load_more_past: can_load_more_past,
-          can_load_more_future: can_load_more_future,
-        )
-      render_serialized(chat_view, Chat::ViewSerializer, root: false)
-    end
-
     def react
       params.require(%i[message_id emoji react_action])
       guardian.ensure_can_react!
@@ -261,26 +179,6 @@ module Chat
       )
 
       render json: success_json
-    end
-
-    def delete
-      guardian.ensure_can_delete_chat!(@message, @chatable)
-
-      Chat::MessageDestroyer.new.trash_message(@message, current_user)
-
-      head :ok
-    end
-
-    def restore
-      chat_channel = @message.chat_channel
-      guardian.ensure_can_restore_chat!(@message, chat_channel.chatable)
-      updated = @message.recover!
-      if updated
-        Chat::Publisher.publish_restore!(chat_channel, @message)
-        render json: success_json
-      else
-        render_json_error(@message)
-      end
     end
 
     def rebake
@@ -298,38 +196,6 @@ module Chat
                  chat_channel_id: @chat_channel.id,
                  chat_channel_title: @chat_channel.title(current_user),
                )
-    end
-
-    def lookup_message
-      set_channel_and_chatable_with_access_check(chat_channel_id: @message.chat_channel_id)
-
-      messages = preloaded_chat_message_query.where(chat_channel: @chat_channel)
-      messages = messages.with_deleted if guardian.can_moderate_chat?(@chatable)
-
-      past_messages =
-        messages
-          .where("created_at < ?", @message.created_at)
-          .order(created_at: :desc)
-          .limit(PAST_MESSAGE_LIMIT)
-
-      future_messages =
-        messages
-          .where("created_at > ?", @message.created_at)
-          .order(created_at: :asc)
-          .limit(FUTURE_MESSAGE_LIMIT)
-
-      can_load_more_past = past_messages.count == PAST_MESSAGE_LIMIT
-      can_load_more_future = future_messages.count == FUTURE_MESSAGE_LIMIT
-      messages = [past_messages.reverse, [@message], future_messages].reduce([], :concat)
-      chat_view =
-        Chat::View.new(
-          chat_channel: @chat_channel,
-          chat_messages: messages,
-          user: current_user,
-          can_load_more_past: can_load_more_past,
-          can_load_more_future: can_load_more_future,
-        )
-      render_serialized(chat_view, Chat::ViewSerializer, root: false)
     end
 
     def set_user_chat_status
@@ -458,6 +324,8 @@ module Chat
           .includes(:bookmarks)
           .includes(:uploads)
           .includes(chat_channel: :chatable)
+          .includes(:thread)
+          .includes(:chat_mentions)
 
       query = query.includes(user: :user_status) if SiteSetting.enable_user_status
 

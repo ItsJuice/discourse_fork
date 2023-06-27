@@ -39,6 +39,8 @@ const ApplicationRoute = DiscourseRoute.extend(OpenComposer, {
   shortSiteDescription: setting("short_site_description"),
   documentTitle: service(),
   dialog: service(),
+  composer: service(),
+  modal: service(),
 
   actions: {
     toggleAnonymous() {
@@ -72,13 +74,6 @@ const ApplicationRoute = DiscourseRoute.extend(OpenComposer, {
       this.documentTitle.setTitle(tokens.join(" - "));
     },
 
-    postWasEnqueued(details) {
-      showModal("post-enqueued", {
-        model: details,
-        title: "review.approval.title",
-      });
-    },
-
     composePrivateMessage(user, post) {
       const recipients = user ? user.get("username") : "";
       const reply = post
@@ -91,7 +86,7 @@ const ApplicationRoute = DiscourseRoute.extend(OpenComposer, {
         : null;
 
       // used only once, one less dependency
-      return this.controllerFor("composer").open({
+      return this.composer.open({
         action: Composer.PRIVATE_MESSAGE,
         recipients,
         archetypeId: "private_message",
@@ -135,7 +130,7 @@ const ApplicationRoute = DiscourseRoute.extend(OpenComposer, {
     ),
 
     showForgotPassword() {
-      this.controllerFor("forgot-password").setProperties({
+      getOwner(this).lookup("controller:forgot-password").setProperties({
         offerHelp: null,
         helpSeen: false,
       });
@@ -158,44 +153,7 @@ const ApplicationRoute = DiscourseRoute.extend(OpenComposer, {
 
     // Close the current modal, and destroy its state.
     closeModal(initiatedBy) {
-      const route = getOwner(this).lookup("route:application");
-      let modalController = route.controllerFor("modal");
-      const controllerName = modalController.get("name");
-
-      if (controllerName) {
-        const controller = getOwner(this).lookup(
-          `controller:${controllerName}`
-        );
-        if (controller && controller.beforeClose) {
-          if (false === controller.beforeClose()) {
-            return;
-          }
-        }
-      }
-
-      this.render("hide-modal", { into: "modal", outlet: "modalBody" });
-
-      if (controllerName) {
-        const controller = getOwner(this).lookup(
-          `controller:${controllerName}`
-        );
-
-        if (controller) {
-          this.appEvents.trigger("modal:closed", {
-            name: controllerName,
-            controller,
-          });
-
-          if (controller.onClose) {
-            controller.onClose({
-              initiatedByCloseButton: initiatedBy === "initiatedByCloseButton",
-              initiatedByClickOut: initiatedBy === "initiatedByClickOut",
-              initiatedByESC: initiatedBy === "initiatedByESC",
-            });
-          }
-        }
-        modalController.set("name", null);
-      }
+      return this.modal.close(initiatedBy);
     },
 
     /**
@@ -204,11 +162,11 @@ const ApplicationRoute = DiscourseRoute.extend(OpenComposer, {
       user clicks "No", reopenModal. If user clicks "Yes", be sure to call closeModal.
     **/
     hideModal() {
-      $(".d-modal.fixed-modal").modal("hide");
+      return this.modal.hide();
     },
 
     reopenModal() {
-      $(".d-modal.fixed-modal").modal("show");
+      return this.modal.reopen();
     },
 
     editCategory(category) {
@@ -254,20 +212,13 @@ const ApplicationRoute = DiscourseRoute.extend(OpenComposer, {
     },
   },
 
-  renderTemplate() {
-    this.render("application");
-    this.render("user-card", { into: "application", outlet: "user-card" });
-    this.render("modal", { into: "application", outlet: "modal" });
-    this.render("composer", { into: "application", outlet: "composer" });
-  },
-
   handleShowLogin() {
     if (this.siteSettings.enable_discourse_connect) {
       const returnPath = encodeURIComponent(window.location.pathname);
       window.location = getURL("/session/sso?return_path=" + returnPath);
     } else {
       this._autoLogin("login", {
-        notAuto: () => this.controllerFor("login").resetForm(),
+        notAuto: () => getOwner(this).lookup("controller:login").resetForm(),
       });
     }
   },
@@ -297,9 +248,11 @@ const ApplicationRoute = DiscourseRoute.extend(OpenComposer, {
     const methods = findAll();
 
     if (!this.siteSettings.enable_local_logins && methods.length === 1) {
-      this.controllerFor("login").send("externalLogin", methods[0], {
-        signup,
-      });
+      getOwner(this)
+        .lookup("controller:login")
+        .send("externalLogin", methods[0], {
+          signup,
+        });
     } else {
       showModal(modal, { modalClass, titleAriaElementId });
       notAuto?.();

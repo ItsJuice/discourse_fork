@@ -169,8 +169,6 @@ lv:
     software_update_prompt:
       message: "Mēs esam atjauninājuši šo vietni, <span>lūdzu, atjaunojiet to</span>, pretējā gadījumā var rasties kļūdas."
       dismiss: "Nerādīt"
-    bootstrap_mode_disabled: "Bootstrap režīms tiks atspējots 24 stundu laikā."
-    bootstrap_invite_button_title: "Nosūtīt ielūgumus"
     themes:
       default_description: "Noklusējums"
     s3:
@@ -309,7 +307,6 @@ lv:
       new_topic: "Jaunas tēmas melnraksts"
       new_private_message: "Jauns personīgā ziņojuma melnraksts"
       abandon:
-        confirm: "Šim tematam tiek izstrādāts melnraksts. Ko jūs vēlētos ar to darīt?"
         yes_value: "Izmest"
         no_value: "Atsākt rediģēšanu"
     preview: "priekšskatījums"
@@ -1025,13 +1022,6 @@ lv:
       save_to_change_theme: 'Tēma tiks atjaunināta pēc noklikšķināšanas uz "%{save_text}"'
       home: "Noklusējuma sākumlapa"
       staged: "Izveidots"
-      staff_counters:
-        flags_given: "noderīgas sūdzības"
-        flagged_posts: "ieraksti ar sūdzībām"
-        deleted_posts: "izdzēstie ieraksti"
-        suspensions: "īslaicīgās bloķēšanas"
-        warnings_received: "brīdinājumi"
-        rejected_posts: "noraidītās ziņas"
       messages:
         all: "visas iesūtnes"
         inbox: "Iesūtne"
@@ -1081,8 +1071,6 @@ lv:
         title: "Divu faktoru rezerves kodi"
         regenerate: "Atkārtoti radīt"
         disable: "Atslēgt"
-        enable: "Ieslēgt"
-        enable_long: "Iespējot rezerves kodus"
         copy_to_clipboard: "Kopēt uz starpliktuvi (clipboard)"
         copy_to_clipboard_error: "Radās kļūda, kopējot uz starpliktuvi (clipboard)"
         copied_to_clipboard: "Nokopēts uz starpliktuvi (clipboard)"
@@ -1498,7 +1486,6 @@ lv:
       hidden_for_session: "Labi, mēs jums jautāsim rīt. Jūs vienmēr varat izmantot arī “Pieteikties”, lai izveidotu kontu."
     summary:
       enabled_description: "Jūs skatāties šīs tēmas kopsavilkumu: pašus interesantākos ierakstus, pēc kopienas domām."
-      enable: "Tēmas kopsavilkums"
       disable: "Parādīt visus ierakstus"
     deleted_filter:
       enabled_description: "Šī tēma satur dzēstus ierakstus, kuri ir paslēpti."
@@ -2683,7 +2670,6 @@ lv:
         one: "Nopelnīja šo žetonu %{count} reizi"
         other: "Nopelnīja šo žetonu %{count} reizes"
       granted_on: "Piešķirts %{date}"
-      others_count: "Citi ar šo žetonu (%{count})"
       title: Žetoni
       allow_title: "Jūs varat izmantot šo žetonu kā titulu"
       multiple_grant: "Jūs esat nopelnījis šo vairākkārt"
@@ -2791,13 +2777,18 @@ lv:
         other: "%{count} jauna"
       more: "Vairāk"
       all_categories: "Visas sadaļas"
+      categories_form_modal:
+        save: "Saglabāt"
       sections:
         custom:
           save: "Saglabāt"
           delete: "Dzēst"
           links:
-            icon: "Ikona"
-            name: "Vārds"
+            reset: "Atiestatīt uz noklusējumu"
+            icon:
+              label: "Ikona"
+            name:
+              label: "Nosaukums"
         about:
           header_link_text: "Par"
         messages:
@@ -2823,8 +2814,8 @@ lv:
               content: "Administrators"
             badges:
               content: "Žetoni"
-            everything:
-              content: "Viss"
+            topics:
+              content: "Tēmas"
             faq:
               content: "BUJ"
             groups:
@@ -3324,11 +3315,6 @@ lv:
           censor: "Cenzēt"
           require_approval: "Pieprasīt apstiprinājumu"
           flag: "Sūdzība"
-        action_descriptions:
-          block: "Neļaut publicēt ierakstus, kas satur šos vārdus. Lietotājs redzēs kļūdas paziņojumu, kad mēģinās nosūtīt savu ierakstu."
-          censor: "Atļaut ierakstus, kas satur šos vārdus, taču aizvietot tos ar simboliem, kas tos paslēps."
-          require_approval: "Ierakstiem, kas satur šos vārdus, būs nepieciešams darbinieku apstiprinājums, pirms tos varēs redzēt citi."
-          flag: "Atļaut ierakstus, kas satur šos vārdus, taču atzīmēt tos kā nepiedienīgus, lai moderatori var tos pārbaudīt."
         form:
           add: "Pievienot"
           success: "Veiksmīgi"
@@ -3361,6 +3347,8 @@ lv:
               key: "minimums"
             maximum:
               key: "maksimums"
+            type:
+              key: "tips"
       impersonate:
         title: "Izlikties (impersonate)"
         help: "Use this tool to impersonate a user account for debugging purposes. You will have to log out once finished.\nIzmanto šo rīku lai izkliktos (impersonate) par lietotāju priekš kļūdu (bugs) meklēšanas. Vajadzēs izlogoties pēc sesijas beigām."

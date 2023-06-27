@@ -184,7 +184,7 @@ RSpec.describe SvgSprite do
       )
       theme.save!
 
-      sprite_files = SvgSprite.custom_svg_sprites(theme.id).join("|")
+      sprite_files = SvgSprite.custom_svgs(theme.id).values.join("|")
       expect(sprite_files).to match(/my-custom-theme-icon/)
 
       SvgSprite.bundle(theme.id)
@@ -230,16 +230,15 @@ RSpec.describe SvgSprite do
     expect(SvgSprite.bundle).to match(/far-building/)
   end
 
-  describe "#custom_svg_sprites" do
+  describe "#custom_svgs" do
     it "is empty by default" do
-      expect(SvgSprite.custom_svg_sprites(nil)).to be_empty
+      expect(SvgSprite.custom_svgs(nil)).to be_empty
       expect(SvgSprite.bundle).not_to be_empty
     end
 
     context "with a plugin" do
       let :plugin1 do
-        plugin1 = Plugin::Instance.new
-        plugin1.path = "#{Rails.root}/spec/fixtures/plugins/my_plugin/plugin.rb"
+        plugin1 = plugin_from_fixtures("my_plugin")
         plugin1
       end
 
@@ -254,7 +253,7 @@ RSpec.describe SvgSprite do
       end
 
       it "includes custom icons from plugins" do
-        expect(SvgSprite.custom_svg_sprites(nil).size).to eq(1)
+        expect(SvgSprite.custom_svgs(nil).size).to eq(1)
         expect(SvgSprite.bundle).to match(/custom-icon/)
       end
     end

@@ -156,11 +156,6 @@ zh_TW:
     software_update_prompt:
       message: "我們更新了這個網站， <span>請重新整理</span>，否則您可能會遇到預期之外的狀況。"
       dismiss: "忽略"
-    bootstrap_mode_enabled:
-      other: "為了讓您更輕鬆地建設網站，您正處於初始模式。將會自動授予所有新註冊的使用者信任等級 1，並自動啟用每日摘要電子郵件。該功能將於 %{count} 個使用者註冊後自動關閉。"
-    bootstrap_mode_disabled: "初始模式將會在 24 小時後自動禁用。"
-    bootstrap_invite_button_title: "送出邀請"
-    bootstrap_wizard_link_title: "完成安裝精靈"
     themes:
       default_description: "預設"
       broken_theme_alert: "您的網站可能無法運行，因為主題/組件有錯誤。"
@@ -292,7 +287,7 @@ zh_TW:
         on_owner_reply: "刪除書籤，一旦我回复"
         clear_reminder: "保留書籤和清除提醒"
       search_placeholder: "依名稱、主題標題或貼文內容搜尋書籤"
-      search: "搜索"
+      search: "搜尋"
       reminders:
         today_with_time: "今天 %{time}"
         tomorrow_with_time: "明天 %{time}"
@@ -311,7 +306,6 @@ zh_TW:
       new_topic: "新話題草稿"
       new_private_message: "新個人訊息草稿"
       abandon:
-        confirm: "您有針對此主題的草稿。您想用它做什麼？"
         yes_value: "捨棄"
         no_value: "繼續編輯"
     topic_count_categories:
@@ -940,11 +934,8 @@ zh_TW:
         enable: "啟用側選單"
         options: "選項"
         categories_section: "選擇分類"
-        categories_section_instruction: "選定的分類將顯示在側選單的分類段落中。"
         tags_section: "選擇標籤"
-        tags_section_instruction: "選定的標籤將顯示在側選單的標籤段落中。"
         navigation_section: "導覽"
-        list_destination_instruction: "當側邊欄中有新內容時..."
         list_destination_default: "使用預設連結並顯示新項目的徽章"
         list_destination_unread_new: "連結至未讀/新的並顯示新項目的數量"
       change: "修改"
@@ -1010,12 +1001,6 @@ zh_TW:
       theme: "佈景主題"
       home: "預設首頁"
       staged: "暫存"
-      staff_counters:
-        flags_given: "有幫助的檢舉"
-        flagged_posts: "已檢舉的貼文"
-        deleted_posts: "已刪除的貼文"
-        suspensions: "停權"
-        warnings_received: "警告"
       messages:
         inbox: "收件匣"
         personal: "個人的"
@@ -1047,7 +1032,6 @@ zh_TW:
         tags: "標籤"
         interface: "界面"
         apps: "應用"
-        sidebar: "側選單"
       change_password:
         success: "( 寄出的郵件 )"
         in_progress: "( 正在傳送郵件 )"
@@ -1059,8 +1043,8 @@ zh_TW:
       second_factor_backup:
         regenerate: "重新產生"
         disable: "禁用"
-        enable: "啟用"
-        enable_long: "啟用備用碼"
+        manage:
+          other: "你還剩下 <strong>%{count}</strong> 個可使用的備用碼"
         copy_to_clipboard: "複製至剪貼簿"
         copy_to_clipboard_error: "複製至剪貼簿時發生錯誤"
         copied_to_clipboard: "複製至剪貼簿"
@@ -1150,10 +1134,10 @@ zh_TW:
       name:
         title: "名稱"
         instructions: "您的全名 (選填)"
-        instructions_required: "您的匿稱"
+        instructions_required: "您的暱稱"
         required: "請輸入名稱"
-        too_short: "你的匿稱太短。"
-        ok: "你的匿稱符合要求。"
+        too_short: "你的暱稱太短。"
+        ok: "你的暱稱符合要求。"
       username:
         title: "使用者名稱"
         instructions: "獨一、無空格、短的"
@@ -1424,7 +1408,6 @@ zh_TW:
       enabled_description: "你正在檢視此話題的摘要：在這個社群裡最熱門的貼文。"
       description:
         other: "有 <b>%{count}</b> 個回覆。"
-      enable: "以摘要檢視此話題"
       disable: "顯示所有貼文"
     deleted_filter:
       enabled_description: "這個話題含有被刪除的回覆，這些回覆已被隱藏。"
@@ -1743,6 +1726,7 @@ zh_TW:
       watching_first_post: "<span>新話題</span> %{description}"
       reaction: "<span>%{username}</span> %{description}"
       reaction_2: "<span>%{username}、%{username2}</span> %{description}"
+      admin_problems: "有新的建議出現在後台儀表板"
       dismiss_confirmation:
         dismiss: "忽略"
         cancel: "取消"
@@ -1782,8 +1766,8 @@ zh_TW:
       too_short: "你的搜尋詞語太短。"
       result_count:
         other: "關於<span class='term'>%{term}</span>的<span>%{count}%{plus} 個結果 </span>"
-      title: "搜索"
-      full_page_title: "搜索"
+      title: "搜尋"
+      full_page_title: "搜尋"
       results: "結果"
       no_results: "未找到任何結果。"
       no_more_results: "沒有找到更多的結果。"
@@ -1795,7 +1779,7 @@ zh_TW:
       or_search_google: "或是嘗試利用 Google 搜尋:"
       search_google: "嘗試利用 Google 搜尋:"
       search_google_button: "Google"
-      search_button: "搜索"
+      search_button: "搜尋"
       categories: "分類"
       tags: "標籤"
       type:
@@ -1803,7 +1787,7 @@ zh_TW:
         categories: "分類"
       context:
         user: "搜尋 @%{username} 的貼文"
-        category: "搜索 #%{category} 分類"
+        category: "搜尋 #%{category} 分類"
         topic: "搜尋此話題"
         private_messages: "搜尋訊息"
       advanced:
@@ -2481,7 +2465,7 @@ zh_TW:
         activity: "活動"
         posters: "發表人"
         category: "分類"
-        created: "創建"
+        created: "建立"
       sort_ascending: "升序"
       sort_descending: "降序"
       subcategory_list_styles:
@@ -2734,7 +2718,6 @@ zh_TW:
       earned_n_times:
         other: "授予徽章 %{count} 次"
       granted_on: "授予於%{date}"
-      others_count: "其他有該徽章的人（%{count}）"
       title: 徽章
       allow_title: "您能使用此徽章作為稱號"
       multiple_grant: "您能多次獲得此徽章"
@@ -2863,6 +2846,13 @@ zh_TW:
         member: "成員"
         regular: "活躍使用者"
         leader: "資深"
+    user_activity:
+      no_activity_body: "歡迎來到我們的社群！你是新來的，還沒有參與討論。第一步，訪問 <a href='%{topUrl}'>精選話題</a> 或<a href='%{categoriesUrl}'>類別</a>，然後開始閱讀！在您喜歡或想了解更多資訊的貼文上選擇 %{heartIcon}。當您參與時，您的活動將>列在此處。"
+    no_group_messages_title: "找不到群組訊息"
+    fullscreen_table:
+      expand_btn: "展開表格"
+    second_factor_auth:
+      redirect_after_success: "兩步驟驗證成功。重新導向至之前的頁面..."
     sidebar:
       unread_count:
         other: "%{count} 個未讀"
@@ -2871,13 +2861,18 @@ zh_TW:
       more: "更多"
       all_categories: "所有分類"
       all_tags: "所有標籤"
+      categories_form_modal:
+        save: "保存"
       sections:
         custom:
           save: "保存"
           delete: "刪除"
           links:
-            icon: "圖示"
-            name: "名字"
+            reset: "重設為預設值"
+            icon:
+              label: "圖示"
+            name:
+              label: "姓名"
         about:
           header_link_text: "關於"
         messages:
@@ -2909,8 +2904,8 @@ zh_TW:
               content: "管理員"
             badges:
               content: "徽章"
-            everything:
-              content: "所有"
+            topics:
+              content: "討論話題"
               title: "所有話題"
             faq:
               content: "常見問答"
@@ -3092,7 +3087,7 @@ zh_TW:
         instruction: "Webhooks 讓 Discourse 可以在特定事件發生時通知外部服務。當 webhook 事件觸發時，一個 POST 請求將發向指定地址。"
         detailed_instruction: "一個 POST 請求將在選定事件發生時發至指定 URL。"
         new: "新建 Webhook"
-        create: "創建"
+        create: "建立"
         edit: "編輯"
         save: "保存"
         controls: "控制"
@@ -3160,7 +3155,7 @@ zh_TW:
           ping: "Ping"
           status: "狀態碼"
           event_id: "ID"
-          timestamp: "創建時間"
+          timestamp: "建立時間"
           completion: "完成時間"
           actions: "操作"
       plugins:
@@ -3679,11 +3674,6 @@ zh_TW:
           flag: "檢舉"
           replace: "取代"
           silence: "靜音"
-        action_descriptions:
-          block: "防止含有這些文字的貼文被發佈，當使用者嘗試發送貼文時，會看見錯誤訊息。"
-          censor: "允許貼文含有這些文字，但以符碼來取代被禁用的文字。"
-          require_approval: "含有這些文字的貼文需要經過管理員審查才能被發佈。"
-          flag: "允許貼文含有這些文字，但標註成不當的用字以讓管理員能審核。"
         form:
           placeholder_regexp: "正規表示法"
           link_placeholder: "https://example.com"
@@ -3717,6 +3707,8 @@ zh_TW:
           validations:
             required:
               key: "必填"
+            type:
+              key: "類型"
       impersonate:
         title: "檢視角度"
         help: "使用此工具以使用者的檢視角度進行除錯。完成後將需登出。"
@@ -3965,15 +3957,15 @@ zh_TW:
           enabled: "在使用者卡片上顯示"
           disabled: "在使用者卡片上隱藏"
         searchable:
-          title: "可搜索"
-          enabled: "可搜索"
+          title: "可搜尋"
+          enabled: "可搜尋"
         field_types:
           text: "文字區域"
           confirm: "確認"
           dropdown: "下拉"
       site_text:
-        description: "你可以自定義論壇的任意文本。請按以下搜索："
-        search: "搜索你想要編輯的文本"
+        description: "你可以自定義論壇的任意文本。請按以下搜尋："
+        search: "搜尋你想要編輯的文本"
         title: "文字"
         edit: "編輯"
         revert: "恢復變更"
@@ -3989,7 +3981,6 @@ zh_TW:
       site_settings:
         title: "設定"
         no_results: "未找到任何結果。"
-        more_than_30_results: "共有超過 30 筆搜尋結果，請輸入更精確的文字或選擇特定分類搜尋。"
         clear_filter: "清除"
         add_url: "加入網址"
         add_host: "新增主機"
@@ -4028,7 +4019,7 @@ zh_TW:
           plugins: "延伸套件"
           user_preferences: "偏好設定"
           tags: "標籤"
-          search: "搜索"
+          search: "搜尋"
           groups: "群組"
           dashboard: "控制面板"
           navigation: "導覽"
@@ -4133,7 +4124,7 @@ zh_TW:
         allowed_embed_selectors: "使用 CSS 選擇器選擇允許的嵌入元素"
         blocked_embed_selectors: "使用 CSS 選擇器移除嵌入元素"
         allowed_embed_classnames: "允許 CSS class 名稱"
-        save: "儲存崁入設定"
+        save: "儲存嵌入設定"
       permalink:
         title: "固定連結"
         url: "網址"
@@ -4162,7 +4153,7 @@ zh_TW:
     wizard:
       back: "上一步"
       next: "下一步"
-      step-text: "梯級"
+      step-text: "步驟"
       step: "%{current} / %{total}"
       uploading: "上傳中..."
       upload_error: "抱歉，上傳檔案時發生錯誤，請再試一次。"

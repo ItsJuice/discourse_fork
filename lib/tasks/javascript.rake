@@ -87,32 +87,6 @@ def dependencies
       source: "@discourse/moment-timezone-names-translations/locales/.",
       destination: "moment-timezone-names-locale",
     },
-    { source: "workbox-sw/build/.", destination: "workbox", public: true, skip_versioning: true },
-    {
-      source: "workbox-routing/build/.",
-      destination: "workbox",
-      public: true,
-      skip_versioning: true,
-    },
-    { source: "workbox-core/build/.", destination: "workbox", public: true, skip_versioning: true },
-    {
-      source: "workbox-strategies/build/.",
-      destination: "workbox",
-      public: true,
-      skip_versioning: true,
-    },
-    {
-      source: "workbox-expiration/build/.",
-      destination: "workbox",
-      public: true,
-      skip_versioning: true,
-    },
-    {
-      source: "workbox-cacheable-response/build/.",
-      destination: "workbox",
-      skip_versioning: true,
-      public: true,
-    },
     {
       source: "squoosh/codecs/mozjpeg/enc/mozjpeg_enc.js",
       destination: "squoosh",
@@ -163,6 +137,16 @@ task "javascript:update_constants" => :environment do
     export const SEARCH_PRIORITIES = #{Searchable::PRIORITIES.to_json};
 
     export const SEARCH_PHRASE_REGEXP = '#{Search::PHRASE_MATCH_REGEXP_PATTERN}';
+
+    export const SIDEBAR_URL = {
+      max_icon_length: #{SidebarUrl::MAX_ICON_LENGTH},
+      max_name_length: #{SidebarUrl::MAX_NAME_LENGTH},
+      max_value_length: #{SidebarUrl::MAX_VALUE_LENGTH}
+    }
+
+    export const SIDEBAR_SECTION = {
+      max_title_length: #{SidebarSection::MAX_TITLE_LENGTH},
+    }
   JS
 
   pretty_notifications = Notification.types.map { |n| "  #{n[0]}: #{n[1]}," }.join("\n")

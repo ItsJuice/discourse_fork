@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "Bookmarking posts and topics", type: :system, js: true do
+describe "Bookmarking posts and topics", type: :system do
   fab!(:topic) { Fabricate(:topic) }
   fab!(:user) { Fabricate(:user) }
   fab!(:post) { Fabricate(:post, topic: topic, raw: "This is some post to bookmark") }
@@ -43,7 +43,7 @@ describe "Bookmarking posts and topics", type: :system, js: true do
     bookmark_modal.fill_name("something important")
     bookmark_modal.cancel
 
-    expect(topic_page).not_to have_post_bookmarked(post)
+    expect(topic_page).to have_no_post_bookmarked(post)
     expect(Bookmark.exists?(bookmarkable: post, user: user)).to eq(false)
   end
 

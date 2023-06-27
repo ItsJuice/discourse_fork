@@ -9,6 +9,10 @@ class User < ActiveRecord::Base
 
   DEFAULT_FEATURED_BADGE_COUNT = 3
 
+  PASSWORD_SALT_LENGTH = 16
+  TARGET_PASSWORD_ALGORITHM =
+    "$pbkdf2-#{Rails.configuration.pbkdf2_algorithm}$i=#{Rails.configuration.pbkdf2_iterations},l=32$"
+
   # not deleted on user delete
   has_many :posts
   has_many :topics
@@ -149,7 +153,7 @@ class User < ActiveRecord::Base
   validate :name_validator, if: :will_save_change_to_name?
   validates :name, user_full_name: true, if: :will_save_change_to_name?, length: { maximum: 255 }
   validates :ip_address, allowed_ip_address: { on: :create, message: :signup_not_allowed }
-  validates :primary_email, presence: true
+  validates :primary_email, presence: true, unless: :skip_email_validation
   validates :validatable_user_fields_values, watched_words: true, unless: :custom_fields_clean?
   validates_associated :primary_email,
                        message: ->(_, user_email) { user_email[:value]&.errors[:email]&.first }
@@ -176,6 +180,7 @@ class User < ActiveRecord::Base
                if: Proc.new { self.human? && self.saved_change_to_uploaded_avatar_id? }
 
   after_update :trigger_user_automatic_group_refresh, if: :saved_change_to_staged?
+  after_update :change_display_name, if: :saved_change_to_name?
 
   before_save :update_usernames
   before_save :ensure_password_is_hashed
@@ -588,7 +593,6 @@ class User < ActiveRecord::Base
     @unread_pms = nil
     @unread_bookmarks = nil
     @unread_high_prios = nil
-    @user_fields_cache = nil
     @ignored_user_ids = nil
     @muted_user_ids = nil
     @belonging_to_group_ids = nil
@@ -603,7 +607,7 @@ class User < ActiveRecord::Base
     @muted_user_ids ||= muted_users.pluck(:id)
   end
 
-  def unread_notifications_of_type(notification_type)
+  def unread_notifications_of_type(notification_type, since: nil)
     # perf critical, much more efficient than AR
     sql = <<~SQL
         SELECT COUNT(*)
@@ -613,10 +617,11 @@ class User < ActiveRecord::Base
            AND n.notification_type = :notification_type
            AND n.user_id = :user_id
            AND NOT read
+           #{since ? "AND n.created_at > :since" : ""}
     SQL
 
     # to avoid coalesce we do to_i
-    DB.query_single(sql, user_id: id, notification_type: notification_type)[0].to_i
+    DB.query_single(sql, user_id: id, notification_type: notification_type, since: since)[0].to_i
   end
 
   def unread_notifications_of_priority(high_priority:)
@@ -756,7 +761,7 @@ class User < ActiveRecord::Base
   end
 
   def reviewable_count
-    Reviewable.list_for(self, include_claimed_by_others: !redesigned_user_menu_enabled?).count
+    Reviewable.list_for(self, include_claimed_by_others: false).count
   end
 
   def saw_notification_id(notification_id)
@@ -803,20 +808,8 @@ class User < ActiveRecord::Base
     MessageBus.publish("/reviewable_counts/#{self.id}", data, user_ids: [self.id])
   end
 
-  TRACK_FIRST_NOTIFICATION_READ_DURATION = 1.week.to_i
-
   def read_first_notification?
-    if (
-         trust_level > TrustLevel[1] ||
-           (
-             first_seen_at.present? &&
-               first_seen_at < TRACK_FIRST_NOTIFICATION_READ_DURATION.seconds.ago
-           ) || user_option.skip_new_user_tips
-       )
-      return true
-    end
-
-    self.seen_notification_id == 0 ? false : true
+    self.seen_notification_id != 0 || user_option.skip_new_user_tips
   end
 
   def publish_notifications_state
@@ -863,13 +856,9 @@ class User < ActiveRecord::Base
       seen_notification_id: seen_notification_id,
     }
 
-    if self.redesigned_user_menu_enabled?
-      payload[:all_unread_notifications_count] = all_unread_notifications_count
-      payload[:grouped_unread_notifications] = grouped_unread_notifications
-      payload[
-        :new_personal_messages_notifications_count
-      ] = new_personal_messages_notifications_count
-    end
+    payload[:all_unread_notifications_count] = all_unread_notifications_count
+    payload[:grouped_unread_notifications] = grouped_unread_notifications
+    payload[:new_personal_messages_notifications_count] = new_personal_messages_notifications_count
 
     MessageBus.publish("/notification/#{id}", payload, user_ids: [id])
   end
@@ -927,8 +916,20 @@ class User < ActiveRecord::Base
   end
 
   def confirm_password?(password)
-    return false unless password_hash && salt
-    self.password_hash == hash_password(password, salt)
+    return false unless password_hash && salt && password_algorithm
+    confirmed = self.password_hash == hash_password(password, salt, password_algorithm)
+
+    if confirmed && persisted? && password_algorithm != TARGET_PASSWORD_ALGORITHM
+      # Regenerate password_hash with new algorithm and persist
+      salt = SecureRandom.hex(PASSWORD_SALT_LENGTH)
+      update_columns(
+        password_algorithm: TARGET_PASSWORD_ALGORITHM,
+        salt: salt,
+        password_hash: hash_password(password, salt, TARGET_PASSWORD_ALGORITHM),
+      )
+    end
+
+    confirmed
   end
 
   def new_user_posting_on_first_day?
@@ -1502,15 +1503,7 @@ class User < ActiveRecord::Base
   def user_fields(field_ids = nil)
     field_ids = (@all_user_field_ids ||= UserField.pluck(:id)) if field_ids.nil?
 
-    @user_fields_cache ||= {}
-
-    # Memoize based on requested fields
-    @user_fields_cache[field_ids.join(":")] ||= {}.tap do |hash|
-      field_ids.each do |fid|
-        # The hash keys are strings for backwards compatibility
-        hash[fid.to_s] = custom_fields["#{USER_FIELD_PREFIX}#{fid}"]
-      end
-    end
+    field_ids.map { |fid| [fid.to_s, custom_fields["#{USER_FIELD_PREFIX}#{fid}"]] }.to_h
   end
 
   def validatable_user_fields_values
@@ -1810,12 +1803,16 @@ class User < ActiveRecord::Base
     user_status && !user_status.expired?
   end
 
-  def redesigned_user_menu_enabled?
-    !SiteSetting.legacy_navigation_menu? || SiteSetting.enable_new_notifications_menu
-  end
-
   def new_new_view_enabled?
     in_any_groups?(SiteSetting.experimental_new_new_view_groups_map)
+  end
+
+  def new_edit_sidebar_categories_tags_interface_groups_enabled?
+    in_any_groups?(SiteSetting.new_edit_sidebar_categories_tags_interface_groups_map)
+  end
+
+  def experimental_search_menu_groups_enabled?
+    in_any_groups?(SiteSetting.experimental_search_menu_groups_map)
   end
 
   protected
@@ -1862,8 +1859,9 @@ class User < ActiveRecord::Base
 
   def ensure_password_is_hashed
     if @raw_password
-      self.salt = SecureRandom.hex(16)
-      self.password_hash = hash_password(@raw_password, salt)
+      self.salt = SecureRandom.hex(PASSWORD_SALT_LENGTH)
+      self.password_algorithm = TARGET_PASSWORD_ALGORITHM
+      self.password_hash = hash_password(@raw_password, salt, password_algorithm)
     end
   end
 
@@ -1879,14 +1877,9 @@ class User < ActiveRecord::Base
     end
   end
 
-  def hash_password(password, salt)
+  def hash_password(password, salt, algorithm)
     raise StandardError.new("password is too long") if password.size > User.max_password_length
-    Pbkdf2.hash_password(
-      password,
-      salt,
-      Rails.configuration.pbkdf2_iterations,
-      Rails.configuration.pbkdf2_algorithm,
-    )
+    PasswordHasher.hash_password(password: password, salt: salt, algorithm: algorithm)
   end
 
   def add_trust_level
@@ -1968,7 +1961,7 @@ class User < ActiveRecord::Base
       end
     end
 
-    CategoryUser.insert_all!(values) if values.present?
+    CategoryUser.insert_all(values) if values.present?
   end
 
   def set_default_tags_preferences
@@ -2056,8 +2049,8 @@ class User < ActiveRecord::Base
     return if SiteSetting.legacy_navigation_menu?
     return if staged? || bot?
 
-    if SiteSetting.default_sidebar_categories.present?
-      categories_to_update = SiteSetting.default_sidebar_categories.split("|")
+    if SiteSetting.default_navigation_menu_categories.present?
+      categories_to_update = SiteSetting.default_navigation_menu_categories.split("|")
 
       if update
         filtered_default_category_ids =
@@ -2075,8 +2068,8 @@ class User < ActiveRecord::Base
       )
     end
 
-    if SiteSetting.tagging_enabled && SiteSetting.default_sidebar_tags.present?
-      tags_to_update = SiteSetting.default_sidebar_tags.split("|")
+    if SiteSetting.tagging_enabled && SiteSetting.default_navigation_menu_tags.present?
+      tags_to_update = SiteSetting.default_navigation_menu_tags.split("|")
 
       if update
         default_tag_ids = Tag.where(name: tags_to_update).pluck(:id)
@@ -2141,6 +2134,10 @@ class User < ActiveRecord::Base
   def update_previous_visit(timestamp)
     update_visit_record!(timestamp.to_date)
     update_column(:previous_visit_at, last_seen_at) if previous_visit_at_update_required?(timestamp)
+  end
+
+  def change_display_name
+    Jobs.enqueue(:change_display_name, user_id: id, old_name: name_before_last_save, new_name: name)
   end
 
   def trigger_user_created_event
@@ -2228,6 +2225,7 @@ end
 #  secure_identifier         :string
 #  flair_group_id            :integer
 #  last_seen_reviewable_id   :integer
+#  password_algorithm        :string(64)
 #
 # Indexes
 #

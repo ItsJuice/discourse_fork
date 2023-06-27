@@ -539,6 +539,10 @@ RSpec.describe Guardian do
   end
 
   describe "can_impersonate?" do
+    it "disallows impersonation when disabled globally" do
+      global_setting :allow_impersonation, false
+      expect(Guardian.new(admin).can_impersonate?(moderator)).to be_falsey
+    end
     it "allows impersonation correctly" do
       expect(Guardian.new(admin).can_impersonate?(nil)).to be_falsey
       expect(Guardian.new.can_impersonate?(user)).to be_falsey
@@ -2773,6 +2777,16 @@ RSpec.describe Guardian do
       expect(Guardian.new(user).can_anonymize_user?(user)).to be_falsey
     end
 
+    it "is false for an anonymized user" do
+      expect(Guardian.new(user).can_anonymize_user?(anonymous_user)).to be_falsey
+    end
+
+    it "is true for a user with no email" do
+      bad_state_user = Fabricate.build(:user, email: nil)
+      bad_state_user.skip_email_validation = true
+      expect(Guardian.new(moderator).can_anonymize_user?(bad_state_user)).to eq(true)
+    end
+
     it "is true for admin anonymizing a regular user" do
       expect(Guardian.new(admin).can_anonymize_user?(user)).to eq(true)
     end
@@ -4184,6 +4198,62 @@ RSpec.describe Guardian do
       # edge case ... site setting disabled while guardian instansiated (can help with test cases)
       SiteSetting.enable_category_group_moderation = false
       expect(guardian.is_category_group_moderator?(category)).to eq(false)
+    end
+  end
+
+  describe "#can_delete_reviewable_queued_post" do
+    context "when attempting to destroy a non personal reviewable" do
+      it "returns true for api requests from admins" do
+        api_key = Fabricate(:api_key).key
+        queued_post = Fabricate(:reviewable_queued_post, created_by: user)
+        opts = {
+          "HTTP_API_USERNAME" => admin.username,
+          "HTTP_API_KEY" => api_key,
+          "REQUEST_METHOD" => "DELETE",
+          "#{Auth::DefaultCurrentUserProvider::API_KEY_ENV}" => "foo",
+        }
+
+        env = create_request_env(path: "/review/#{queued_post.id}.json").merge(opts)
+        guardian = Guardian.new(admin, ActionDispatch::Request.new(env))
+        expect(guardian.can_delete_reviewable_queued_post?(queued_post)).to eq(true)
+      end
+
+      it "returns false for admin requests not via the API" do
+        queued_post = Fabricate(:reviewable_queued_post, created_by: user)
+        env =
+          create_request_env(path: "/review/#{queued_post.id}.json").merge(
+            { "REQUEST_METHOD" => "DELETE" },
+          )
+        guardian = Guardian.new(admin, ActionDispatch::Request.new(env))
+        expect(guardian.can_delete_reviewable_queued_post?(queued_post)).to eq(false)
+      end
+
+      it "returns false for api requests from tl4 users" do
+        api_key = Fabricate(:api_key).key
+        queued_post = Fabricate(:reviewable_queued_post, created_by: user)
+        opts = {
+          "HTTP_API_USERNAME" => trust_level_4.username,
+          "HTTP_API_KEY" => api_key,
+          "REQUEST_METHOD" => "DELETE",
+          "#{Auth::DefaultCurrentUserProvider::API_KEY_ENV}" => "foo",
+        }
+
+        env = create_request_env(path: "/review/#{queued_post.id}.json").merge(opts)
+        guardian = Guardian.new(trust_level_4, ActionDispatch::Request.new(env))
+        expect(guardian.can_delete_reviewable_queued_post?(queued_post)).to eq(false)
+      end
+    end
+
+    context "when attempting to destroy your own reviewable" do
+      it "returns true" do
+        queued_post = Fabricate(:reviewable_queued_post, created_by: user)
+        env =
+          create_request_env(path: "/review/#{queued_post.id}.json").merge(
+            { "REQUEST_METHOD" => "DELETE" },
+          )
+        guardian = Guardian.new(user, ActionDispatch::Request.new(env))
+        expect(guardian.can_delete_reviewable_queued_post?(queued_post)).to eq(true)
+      end
     end
   end
 end

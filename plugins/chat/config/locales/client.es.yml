@@ -78,7 +78,6 @@ es:
       close: "Cerrar"
       collapse: "Contraer contenedor del chat"
       confirm_flag: "¿Seguro que quieres denunciar el mensaje de %{username}?"
-      deleted: "Se eliminó un mensaje. [ver]"
       hidden: "Se ha ocultado un mensaje. [ver]"
       delete: "Eliminar"
       edited: "editado"
@@ -105,6 +104,8 @@ es:
       heading: "Chat"
       join: "Unirse"
       last_visit: "última visita"
+      summarization:
+        summarize: "Resumir"
       mention_warning:
         dismiss: "descartar"
         invitations_sent:
@@ -153,8 +154,11 @@ es:
       restore: "Restaurar mensaje eliminado"
       save: "Guardar"
       select: "Seleccionar"
-      silence: "Silenciar al usuario"
       return_to_list: "Volver a la lista de canales"
+      return_to_threads_list: "Volver a los debates en curso"
+      unread_threads_count:
+        one: "Tienes %{count} discusiones sin leer"
+        other: "Tienes %{count} discusiones sin leer"
       scroll_to_bottom: "Desplazar hacia abajo"
       scroll_to_new_messages: "Ver nuevos mensajes"
       sound:
@@ -208,6 +212,8 @@ es:
           members: Miembros
           settings: Ajustes
       channel_edit_name_slug_modal:
+        title: Editar canal
+        input_placeholder: Añade un nombre
         name: Nombre del canal
       channel_edit_description_modal:
         title: Editar descripción
@@ -252,6 +258,7 @@ es:
         italic_text: "texto enfatizado"
         bold_text: "texto fuerte"
         code_text: "texto del código"
+        send: "Enviar"
       quote:
         original_channel: 'Enviado originalmente en <a href="%{channelLink}">%{channel}</a>'
         copy_success: "Cita del chat copiada en el portapapeles"
@@ -362,6 +369,27 @@ es:
         symbols: "Símbolos"
         search_placeholder: "Busca por nombre de emoji y alias..."
         no_results: "No hay resultados"
+      thread:
+        title: "Título"
+        default_title: "Hilo"
+        replies:
+          one: "%{count} respuesta"
+          other: "%{count} respuestas"
+        original_message:
+          started_by: "Iniciado por"
+        settings: "Ajustes"
+        last_reply: "última respuesta"
+        notifications:
+          regular:
+            title: "Normal"
+          tracking:
+            title: "Seguir"
+        participants_other_count:
+          one: "+%{count} otro"
+          other: "+%{count} otros"
+      threads:
+        list: "Debates en curso"
+        none: "No participas en ningún hilo de este canal."
       draft_channel_screen:
         header: "Nuevo mensaje"
         cancel: "Cancelar"
@@ -406,9 +434,8 @@ es:
       transcript:
         view: "Ver la transcripción de los mensajes anteriores"
       types:
-        reviewable_chat_message:
+        chat_reviewable_message:
           title: "Mensaje de chat denunciado"
-          flagged_by: "Denunciado por"
     keyboard_shortcuts_help:
       chat:
         title: "Chat"
@@ -439,3 +466,7 @@ es:
         chat_notifications_with_unread:
           one: "Notificaciones del chat: %{count} notificación no leída"
           other: "Notificaciones de chat: %{count} notificaciones no leídas"
+    styleguide:
+      sections:
+        chat:
+          title: Chat

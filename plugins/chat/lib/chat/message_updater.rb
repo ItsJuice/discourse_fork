@@ -31,13 +31,20 @@ module Chat
         validate_message!(has_uploads: upload_info[:uploads].any?)
         @chat_message.cook
         @chat_message.save!
+
+        @chat_message.update_mentions
         update_uploads(upload_info)
         revision = save_revision!
+
         @chat_message.reload
         Chat::Publisher.publish_edit!(@chat_channel, @chat_message)
         Jobs.enqueue(Jobs::Chat::ProcessMessage, { chat_message_id: @chat_message.id })
         Chat::Notifier.notify_edit(chat_message: @chat_message, timestamp: revision.created_at)
         DiscourseEvent.trigger(:chat_message_edited, @chat_message, @chat_channel, @user)
+
+        if @chat_message.thread.present?
+          Chat::Publisher.publish_thread_original_message_metadata!(@chat_message.thread)
+        end
       rescue => error
         @error = error
       end
@@ -81,7 +88,6 @@ module Chat
     def update_uploads(upload_info)
       return unless upload_info[:changed]
 
-      DB.exec("DELETE FROM chat_uploads WHERE chat_message_id = #{@chat_message.id}")
       UploadReference.where(target: @chat_message).destroy_all
       @chat_message.attach_uploads(upload_info[:uploads])
     end

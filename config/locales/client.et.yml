@@ -152,7 +152,6 @@ et:
     emails_are_disabled: "Kõik väljuvad meilid on administraatori poolt blokeeritud. Ühtegi teavitust meili teel ei saadeta."
     software_update_prompt:
       dismiss: "Ignoreeri"
-    bootstrap_invite_button_title: "Saada kutsed"
     themes:
       default_description: "Vaikimisi"
     s3:
@@ -834,13 +833,6 @@ et:
       save_to_change_theme: 'Teema uuendatakse pärast seda, kui klõpsad "%{save_text}”'
       home: "aikimisi avaleht"
       staged: "Ettevalmistamisel"
-      staff_counters:
-        flags_given: "kasulikud tähised"
-        flagged_posts: "tähistatud postitused"
-        deleted_posts: "kustutatud postitused"
-        suspensions: "ajutised peatamised"
-        warnings_received: "hoiatused"
-        rejected_posts: "tagasilükatud postitused"
       messages:
         inbox: "Postkast"
         latest: "Viimased"
@@ -884,8 +876,6 @@ et:
         title: "Kahefaktorilise autentimise varukoodid"
         regenerate: "Genereeri uus"
         disable: "Keela"
-        enable: "Luba"
-        enable_long: "Lülita varukoodid sisse"
         copy_to_clipboard: "Kopeeri lõikelauale"
         copy_to_clipboard_error: "Tõrge kopeerimisel"
         copied_to_clipboard: "Kopeeritud lõikelauale"
@@ -1204,7 +1194,6 @@ et:
       hide_forever: "tänan, ei"
     summary:
       enabled_description: "Vaatad selle teema kokkuvõtet: kõige huvipakkuvamad postitused valib kogukond."
-      enable: "Võta see teema kokku"
       disable: "Näita kõiki postitusi"
     deleted_filter:
       enabled_description: "See teema sisaldab kustutatud postitusi, mis on peidetud."
@@ -2414,7 +2403,6 @@ et:
         one: "Teenis selle märgise %{count} kord"
         other: "Teenis selle märgise %{count} korda"
       granted_on: "Märgistatud %{date}"
-      others_count: "Teised selle märgisega (%{count})"
       title: Märgised
       badge_count:
         one: "%{count} märgis"
@@ -2524,13 +2512,17 @@ et:
         other: "%{count} uut"
       more: "Veel"
       all_categories: "Kõik foorumid"
+      categories_form_modal:
+        save: "Salvesta"
       sections:
         custom:
           save: "Salvesta"
           delete: "Kustuta"
           links:
-            icon: "Ikoon"
-            name: "Nimi"
+            icon:
+              label: "Ikoon"
+            name:
+              label: "Nimi"
         about:
           header_link_text: "Teave"
         messages:
@@ -2556,6 +2548,8 @@ et:
               content: "Admin"
             badges:
               content: "Märgised"
+            topics:
+              content: "Teemasid"
             faq:
               content: "KKK"
             groups:
@@ -3173,6 +3167,8 @@ et:
               key: "miinimum"
             maximum:
               key: "maksimum"
+            type:
+              key: "tüüp"
       impersonate:
         title: "Kehasta"
         help: "Kasuta seda töövahendit kasutajakonto ülevõtmiseks silumise eesmärgil. Tühistamiseks pead välja logima."

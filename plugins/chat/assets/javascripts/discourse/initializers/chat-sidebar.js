@@ -9,7 +9,6 @@ import { emojiUnescape } from "discourse/lib/text";
 import { decorateUsername } from "discourse/helpers/decorate-username-selector";
 import { until } from "discourse/lib/formatter";
 import { inject as service } from "@ember/service";
-import { computed } from "@ember/object";
 
 export default {
   name: "chat-sidebar",
@@ -34,7 +33,6 @@ export default {
               return dasherize(this.channel.slugifiedTitle);
             }
 
-            @computed("chatService.activeChannel")
             get classNames() {
               const classes = [];
 
@@ -68,7 +66,7 @@ export default {
             }
 
             get prefixValue() {
-              return "hashtag";
+              return "d-chat";
             }
 
             get prefixColor() {
@@ -90,13 +88,11 @@ export default {
             }
 
             get suffixValue() {
-              return this.channel.currentUserMembership.unread_count > 0
-                ? "circle"
-                : "";
+              return this.channel.tracking.unreadCount > 0 ? "circle" : "";
             }
 
             get suffixCSSClass() {
-              return this.channel.currentUserMembership.unread_mentions > 0
+              return this.channel.tracking.mentionCount > 0
                 ? "urgent"
                 : "unread";
             }
@@ -197,7 +193,6 @@ export default {
               return this.channel.slugifiedTitle;
             }
 
-            @computed("chatService.activeChannel")
             get classNames() {
               const classes = [];
 
@@ -285,9 +280,7 @@ export default {
             }
 
             get suffixValue() {
-              return this.channel.currentUserMembership.unread_count > 0
-                ? "circle"
-                : "";
+              return this.channel.tracking.unreadCount > 0 ? "circle" : "";
             }
 
             get suffixCSSClass() {

@@ -1,3 +1,4 @@
+import { isTesting } from "discourse-common/config/environment";
 import { iconHTML } from "discourse-common/lib/icon-library";
 import I18n from "I18n";
 import { escape } from "pretty-text/sanitizer";
@@ -24,6 +25,8 @@ export function showUserTip(options) {
     hideOnClick: false,
     trigger: "manual",
     theme: "user-tips",
+    zIndex: "",
+    delay: isTesting() ? 0 : 100,
 
     // It must be interactive to make buttons work.
     interactive: true,
@@ -55,6 +58,8 @@ export function showUserTip(options) {
       </div>`,
 
     onCreate(instance) {
+      instance.popper.classList.add("user-tip");
+
       instance.popper
         .querySelector(".btn-dismiss")
         .addEventListener("click", (event) => {

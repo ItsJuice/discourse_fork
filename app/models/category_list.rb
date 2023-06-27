@@ -8,6 +8,21 @@ class CategoryList
 
   attr_accessor :categories, :uncategorized
 
+  def self.register_included_association(association)
+    @included_assocations ||= []
+    @included_assocations << association if !@included_assocations.include?(association)
+  end
+
+  def self.included_associations
+    [
+      :uploaded_background,
+      :uploaded_logo,
+      :uploaded_logo_dark,
+      :topic_only_relative_url,
+      subcategories: [:topic_only_relative_url],
+    ].concat(@included_assocations || [])
+  end
+
   def initialize(guardian = nil, options = {})
     @guardian = guardian || Guardian.new
     @options = options
@@ -104,24 +119,19 @@ class CategoryList
   end
 
   def find_categories
-    @categories =
-      Category.includes(
-        :uploaded_background,
-        :uploaded_logo,
-        :uploaded_logo_dark,
-        :topic_only_relative_url,
-        subcategories: [:topic_only_relative_url],
-      ).secured(@guardian)
+    query = Category.includes(CategoryList.included_associations).secured(@guardian)
 
-    @categories =
-      @categories.where(
+    query =
+      query.where(
         "categories.parent_category_id = ?",
         @options[:parent_category_id].to_i,
       ) if @options[:parent_category_id].present?
 
-    @categories = self.class.order_categories(@categories)
+    query = self.class.order_categories(query)
+    query =
+      DiscoursePluginRegistry.apply_modifier(:category_list_find_categories_query, query, self)
 
-    @categories = @categories.to_a
+    @categories = query.to_a
 
     include_subcategories = @options[:include_subcategories] == true
 

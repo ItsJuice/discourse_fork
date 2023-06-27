@@ -16,12 +16,23 @@ module Chat
                :bookmark,
                :available_flags,
                :thread_id,
-               :chat_channel_id
+               :chat_channel_id,
+               :mentioned_users
 
     has_one :user, serializer: Chat::MessageUserSerializer, embed: :objects
     has_one :chat_webhook_event, serializer: Chat::WebhookEventSerializer, embed: :objects
     has_one :in_reply_to, serializer: Chat::InReplyToSerializer, embed: :objects
     has_many :uploads, serializer: ::UploadSerializer, embed: :objects
+
+    def mentioned_users
+      object
+        .chat_mentions
+        .map(&:user)
+        .compact
+        .sort_by(&:id)
+        .map { |user| BasicUserWithStatusSerializer.new(user, root: false) }
+        .as_json
+    end
 
     def channel
       @channel ||= @options.dig(:chat_channel) || object.chat_channel
@@ -32,7 +43,7 @@ module Chat
     end
 
     def excerpt
-      WordWatcher.censor(object.excerpt)
+      object.censored_excerpt
     end
 
     def reactions
@@ -150,6 +161,14 @@ module Chat
 
         sym
       end
+    end
+
+    def include_threading_data?
+      SiteSetting.enable_experimental_chat_threaded_discussions && channel.threading_enabled
+    end
+
+    def include_thread_id?
+      include_threading_data?
     end
   end
 end

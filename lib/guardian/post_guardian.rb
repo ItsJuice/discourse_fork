@@ -269,7 +269,10 @@ module PostGuardian
       return false
     end
     return true if is_moderator? || is_category_group_moderator?(post.topic.category)
-    return true if !post.trashed? || can_see_deleted_post?(post)
+    if (!post.trashed? || can_see_deleted_post?(post)) &&
+         (!post.hidden? || can_see_hidden_post?(post))
+      return true
+    end
     false
   end
 
@@ -278,6 +281,15 @@ module PostGuardian
     return false if @user.anonymous?
     return true if is_staff?
     post.deleted_by_id == @user.id && @user.has_trust_level?(TrustLevel[4])
+  end
+
+  def can_see_hidden_post?(post)
+    if SiteSetting.hidden_post_visible_groups_map.include?(Group::AUTO_GROUPS[:everyone])
+      return true
+    end
+    return false if anonymous?
+    return true if is_staff?
+    post.user_id == @user.id || @user.in_any_groups?(SiteSetting.hidden_post_visible_groups_map)
   end
 
   def can_view_edit_history?(post)

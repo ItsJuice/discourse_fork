@@ -268,6 +268,16 @@ aside.onebox {
       .location {
         margin-right: 10px;
       }
+      .user-onebox--joined {
+        color: var(--primary-medium);
+        margin-top: 10px;
+      }
+      .aspect-image {
+        width: 80px;
+        height: 80px;
+        float: left;
+        margin-right: 1em;
+      }
     }
 
     // instagram + reddit fixes
@@ -753,16 +763,10 @@ aside.onebox.xkcd .onebox-body img {
 }
 
 .onebox {
-  &.allowlistedgeneric,
-  &.whitelistedgeneric,
-  &.discoursetopic,
-  &.gfycat,
-  &.githubfolder {
-    .site-icon {
-      width: 16px;
-      height: 16px;
-      margin-right: 0.5em;
-    }
+  .site-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 0.5em;
   }
   &.category-onebox {
     border: 1px solid var(--primary-low);

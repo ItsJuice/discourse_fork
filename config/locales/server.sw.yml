@@ -905,7 +905,6 @@ sw:
     embed_support_markdown: "Ruhusu umbizo wa Markdown kwa ajili ya machapisho yaliyoambatanishwa."
     embed_post_limit: "Kiwango cha juu cha machapisho yakuambatanisha."
     embed_username_required: "Jina la mtumiaji kwa ajili ya kutengeneza mada linahitajika."
-    show_create_topics_notice: "Kama tovuti ina machapisho chini ya 5, onyesha notisi kuwaambia viongozi kutengeneza mada mpya."
     delete_drafts_older_than_n_days: "Futa mswadajaribio zenye umri zaidi ya siku (n)."
     enable_emoji: "Ruhusu ishara"
     emoji_set: "Ungependa ishara yako iwe vipi?"
@@ -926,7 +925,6 @@ sw:
     default_categories_watching: "Orodha ya kategoria zinazoangaliwa kama chaguo-msingi."
     default_categories_tracking: "Orodha ya kategoria zinazofuatiliwa kama chaguo-msingi."
     default_categories_muted: "Orodha ya kategoria zinazonyamazishwa kama chaguo-msingi."
-    min_trust_level_for_user_api_key: "Kiwango cha uaminifu kinachohitajika kutengeneza funguo za API za mtumiaji"
     tagging_enabled: "Ruhusu lebo kwenye mada?"
     min_trust_to_create_tag: "kiwango cha chini cha uaminifu kinachohitajika kutengeneza lebo."
     max_tags_per_topic: "Kiwango cha juu cha lebo ambazo zinaweza kuwekwa kwenye mada."
@@ -1401,8 +1399,6 @@ sw:
         Unaweza kuandika majibu na mada tena. Asante kwa uvumilivu wako.
     pending_users_reminder:
       title: "Ukumbusho wa Watumiaji Waliosubirishwa"
-    dashboard_problems:
-      title: "Matatizo ya Ubao"
     new_user_of_the_month:
       title: "Wewe ni Mtumiaji Mpya wa Mwezi!"
       subject_template: "Wewe ni Mtumiaji Mpya wa Mwezi!"
@@ -1751,10 +1747,6 @@ sw:
   offline:
     title: "Haiwezi kupakia programu-tumizi"
     offline_page_message: "Inaonekana kuwa hauko hewani! Tafadhali angalia muunganisho wa mtandao na jaribu tena."
-  login_required:
-    welcome_message: |
-      ## [Karibu kwenye %{title}](#karibu)
-      Akaunti inahitajika. Tafadhali tengeneza akaunti au ingia kuendelea.
   upload:
     unauthorized: "Samahani, faili unalo jaribu kupakia halina kibali (authorized extensions: %{authorized_extensions})."
     pasted_image_filename: "Picha Iliyobandikwa"

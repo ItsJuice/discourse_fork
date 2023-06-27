@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Visit channel", type: :system, js: true do
+RSpec.describe "Visit channel", type: :system do
   fab!(:category) { Fabricate(:category) }
   fab!(:topic) { Fabricate(:topic) }
   fab!(:post) { Fabricate(:post, topic: topic) }
@@ -90,6 +90,30 @@ RSpec.describe "Visit channel", type: :system, js: true do
 
             expect(page).to have_content(I18n.t("invalid_access"))
           end
+        end
+      end
+
+      context "when category channel is read-only" do
+        fab!(:restricted_category) { Fabricate(:category, read_restricted: true) }
+        fab!(:readonly_group_1) { Fabricate(:group, users: [current_user]) }
+        fab!(:readonly_category_channel_1) do
+          Fabricate(:category_channel, chatable: restricted_category)
+        end
+        fab!(:message_1) { Fabricate(:chat_message, chat_channel: readonly_category_channel_1) }
+
+        before do
+          Fabricate(
+            :category_group,
+            category: restricted_category,
+            group: readonly_group_1,
+            permission_type: CategoryGroup.permission_types[:readonly],
+          )
+        end
+
+        it "shows an error" do
+          chat.visit_channel(inaccessible_dm_channel_1)
+
+          expect(page).to have_content(I18n.t("invalid_access"))
         end
       end
 

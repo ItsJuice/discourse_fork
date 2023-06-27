@@ -1,4 +1,5 @@
 import Service, { inject as service } from "@ember/service";
+import { debounce } from "discourse-common/utils/decorators";
 import Promise from "rsvp";
 import ChatChannel from "discourse/plugins/chat/discourse/models/chat-channel";
 import { tracked } from "@glimmer/tracking";
@@ -9,7 +10,7 @@ const DIRECT_MESSAGE_CHANNELS_LIMIT = 20;
 
 /*
   The ChatChannelsManager service is responsible for managing the loaded chat channels.
-  It provides helpers to facilitate using and managing laoded channels instead of constantly
+  It provides helpers to facilitate using and managing loaded channels instead of constantly
   fetching them from the server.
 */
 
@@ -34,11 +35,19 @@ export default class ChatChannelsManager extends Service {
     return Object.values(this._cached);
   }
 
-  store(channelObject) {
-    let model = this.#findStale(channelObject.id);
+  store(channelObject, options = {}) {
+    let model;
+
+    if (!options.replace) {
+      model = this.#findStale(channelObject.id);
+    }
 
     if (!model) {
-      model = ChatChannel.create(channelObject);
+      if (channelObject instanceof ChatChannel) {
+        model = channelObject;
+      } else {
+        model = ChatChannel.create(channelObject);
+      }
       this.#cache(model);
     }
 
@@ -60,11 +69,10 @@ export default class ChatChannelsManager extends Service {
       return this.chatApi.followChannel(model.id).then((membership) => {
         model.currentUserMembership.following = membership.following;
         model.currentUserMembership.muted = membership.muted;
-        model.currentUserMembership.desktop_notification_level =
-          membership.desktop_notification_level;
-        model.currentUserMembership.mobile_notification_level =
-          membership.mobile_notification_level;
-
+        model.currentUserMembership.desktopNotificationLevel =
+          membership.desktopNotificationLevel;
+        model.currentUserMembership.mobileNotificationLevel =
+          membership.mobileNotificationLevel;
         return model;
       });
     } else {
@@ -82,23 +90,15 @@ export default class ChatChannelsManager extends Service {
     });
   }
 
-  get unreadCount() {
-    let count = 0;
-    this.publicMessageChannels.forEach((channel) => {
-      count += channel.currentUserMembership.unread_count || 0;
-    });
-    return count;
+  @debounce(300)
+  async markAllChannelsRead() {
+    // The user tracking state for each channel marked read will be propagated by MessageBus
+    return this.chatApi.markAllChannelsAsRead();
   }
 
-  get unreadUrgentCount() {
-    let count = 0;
-    this.channels.forEach((channel) => {
-      if (channel.isDirectMessageChannel) {
-        count += channel.currentUserMembership.unread_count || 0;
-      }
-      count += channel.currentUserMembership.unread_mentions || 0;
-    });
-    return count;
+  remove(model) {
+    this.chatSubscriptionsManager.stopChannelSubscription(model);
+    delete this._cached[model.id];
   }
 
   get publicMessageChannels() {
@@ -127,9 +127,8 @@ export default class ChatChannelsManager extends Service {
     return this.chatApi
       .channel(id)
       .catch(popupAjaxError)
-      .then((channel) => {
-        this.#cache(channel);
-        return channel;
+      .then((result) => {
+        return this.store(result.channel);
       });
   }
 
@@ -147,14 +146,12 @@ export default class ChatChannelsManager extends Service {
 
   #sortDirectMessageChannels(channels) {
     return channels.sort((a, b) => {
-      const unreadCountA = a.currentUserMembership.unread_count || 0;
-      const unreadCountB = b.currentUserMembership.unread_count || 0;
-      if (unreadCountA === unreadCountB) {
+      if (a.tracking.unreadCount === b.tracking.unreadCount) {
         return new Date(a.lastMessageSentAt) > new Date(b.lastMessageSentAt)
           ? -1
           : 1;
       } else {
-        return unreadCountA > unreadCountB ? -1 : 1;
+        return a.tracking.unreadCount > b.tracking.unreadCount ? -1 : 1;
       }
     });
   }

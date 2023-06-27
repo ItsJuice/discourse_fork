@@ -78,7 +78,6 @@ it:
       close: "Chiudi"
       collapse: "Comprimi il cassetto della chat"
       confirm_flag: "Vuoi segnalare il messaggio di %{username}?"
-      deleted: "Un messaggio è stato eliminato. [visualizza]"
       hidden: "Un messaggio è stato nascosto. [visualizza]"
       delete: "Elimina"
       edited: "modificato"
@@ -105,6 +104,8 @@ it:
       heading: "Chat"
       join: "Partecipa"
       last_visit: "ultima visita"
+      summarization:
+        summarize: "Riassumi"
       mention_warning:
         dismiss: "ignora"
         invitations_sent:
@@ -153,7 +154,6 @@ it:
       restore: "Ripristina messaggio eliminato"
       save: "Salva"
       select: "Seleziona"
-      silence: "Silenzia utente"
       return_to_list: "Torna all'elenco dei canali"
       scroll_to_bottom: "Scorri fino in fondo"
       scroll_to_new_messages: "Vedi nuovi messaggi"
@@ -252,6 +252,7 @@ it:
         italic_text: "testo in evidenza"
         bold_text: "testo in grassetto"
         code_text: "testo di codice"
+        send: "Invia"
       quote:
         original_channel: 'Inviato in origine in <a href="%{channelLink}">#%{channel}</a>'
         copy_success: "Citazione della chat copiata negli appunti"
@@ -362,6 +363,21 @@ it:
         symbols: "Simboli"
         search_placeholder: "Cerca per nome emoji e alias..."
         no_results: "Nessun risultato"
+      thread:
+        title: "Titolo"
+        replies:
+          one: "%{count} risposta"
+          other: "%{count} risposte"
+        settings: "Impostazioni"
+        last_reply: "ultima risposta"
+        notifications:
+          regular:
+            title: "Normale"
+          tracking:
+            title: "Contenuto seguito"
+        participants_other_count:
+          one: "+%{count} altro"
+          other: "+%{count} altri"
       draft_channel_screen:
         header: "Nuovo messaggio"
         cancel: "Annulla"
@@ -406,9 +422,8 @@ it:
       transcript:
         view: "Visualizza la trascrizione dei messaggi precedenti"
       types:
-        reviewable_chat_message:
+        chat_reviewable_message:
           title: "Messaggio di chat segnalato"
-          flagged_by: "Segnalato da"
     keyboard_shortcuts_help:
       chat:
         title: "Chat"
@@ -439,3 +454,7 @@ it:
         chat_notifications_with_unread:
           one: "Notifiche chat - %{count} notifica non letta"
           other: "Notifiche chat - %{count} notifiche non lette"
+    styleguide:
+      sections:
+        chat:
+          title: Chat

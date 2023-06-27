@@ -37,11 +37,13 @@ class PostSerializer < BasicPostSerializer
              :flair_url,
              :flair_bg_color,
              :flair_color,
+             :flair_group_id,
              :version,
              :can_edit,
              :can_delete,
              :can_permanently_delete,
              :can_recover,
+             :can_see_hidden_post,
              :can_wiki,
              :link_counts,
              :read,
@@ -179,6 +181,10 @@ class PostSerializer < BasicPostSerializer
     scope.can_recover_post?(object)
   end
 
+  def can_see_hidden_post
+    scope.can_see_hidden_post?(object)
+  end
+
   def can_wiki
     scope.can_wiki?(object)
   end
@@ -211,6 +217,10 @@ class PostSerializer < BasicPostSerializer
 
   def flair_color
     object.user&.flair_group&.flair_color
+  end
+
+  def flair_group_id
+    object.user&.flair_group_id
   end
 
   def link_counts
@@ -565,7 +575,9 @@ class PostSerializer < BasicPostSerializer
       if @topic_view && (mentioned_users = @topic_view.mentioned_users[object.id])
         mentioned_users
       else
-        User.where(username: object.mentions)
+        query = User
+        query = query.includes(:user_status) if SiteSetting.enable_user_status
+        query = query.where(username: object.mentions)
       end
 
     users.map { |user| BasicUserWithStatusSerializer.new(user, root: false) }

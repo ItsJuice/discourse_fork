@@ -15,6 +15,7 @@ de:
           actions:
             chat_channel_status_change: "Chat-Kanal-Status geändert"
             chat_channel_delete: "Chat-Kanal gelöscht"
+            chat_auto_remove_membership: "Mitgliedschaften werden automatisch aus den Kanälen entfernt"
       api:
         scopes:
           descriptions:
@@ -81,8 +82,11 @@ de:
       click_to_join: "Klicke hier, um die verfügbaren Kanäle zu sehen."
       close: "Schließen"
       collapse: "Chat-Bereich ausblenden"
+      expand: "Chat-Übersicht erweitern"
       confirm_flag: "Bist du sicher, dass du die Nachricht von %{username} markieren möchtest?"
-      deleted: "Eine Nachricht wurde gelöscht. [Anzeigen]"
+      deleted:
+        one: "Eine Nachricht wurde gelöscht. [Anzeigen]"
+        other: "%{count} Nachrichten wurden gelöscht. [alle anzeigen]"
       hidden: "Eine Nachricht wurde ausgeblendet. [Anzeigen]"
       delete: "Löschen"
       edited: "bearbeitet"
@@ -112,6 +116,13 @@ de:
       heading: "Chat"
       join: "Beitreten"
       last_visit: "letzter Besuch"
+      summarization:
+        title: "Nachrichten zusammenfassen"
+        description: "Wähle unten eine Option aus, um die im gewünschten Zeitraum gesendeten Konversationen zusammenzufassen."
+        summarize: "Zusammenfassen"
+        since:
+          one: "Letzte Stunde"
+          other: "Letzte %{count} Stunden"
       mention_warning:
         dismiss: "verwerfen"
         cannot_see: "%{username} kann nicht auf diesen Kanal zugreifen und wurde nicht benachrichtigt."
@@ -208,6 +219,7 @@ de:
         composer: "Chat-Composer"
         channels_list: "Liste der Chat-Kanäle"
       no_public_channels: "Du bist keinem Kanal beigetreten."
+      kicked_from_channel: "Du kannst nicht mehr auf diesen Kanal zugreifen."
       only_chat_push_notifications:
         title: "Nur Chat-Push-Benachrichtigungen senden"
         description: "Alle Nicht-Chat-Push-Benachrichtigungen blockieren und nicht senden"
@@ -219,7 +231,8 @@ de:
       close_full_page: "Vollbild-Chat schließen"
       open_message: "Nachricht im Chat öffnen"
       placeholder_self: "Etwas notieren"
-      placeholder_channel: "Chatte mit %{channelName}"
+      placeholder_channel: "Chat in %{channelName}"
+      placeholder_thread: "Chat im Thread"
       placeholder_users: "Chat mit %{commaSeparatedNames}"
       placeholder_new_message_disallowed:
         archived: "Der Kanal ist archiviert, du kannst im Moment keine neuen Nachrichten senden."
@@ -243,8 +256,11 @@ de:
       restore: "Gelöschte Nachricht wiederherstellen"
       save: "Speichern"
       select: "Auswählen"
-      silence: "Benutzer stummschalten"
       return_to_list: "Zurück zur Kanalliste"
+      return_to_threads_list: "Zurück zu den laufenden Diskussionen"
+      unread_threads_count:
+        one: "Du hast %{count} ungelesene Diskussion"
+        other: "Du hast %{count} ungelesene Diskussionen"
       scroll_to_bottom: "Nach unten scrollen"
       scroll_to_new_messages: "Neue Nachrichten anzeigen"
       sound:
@@ -256,6 +272,8 @@ de:
       title: "Chat"
       title_capitalized: "Chat"
       upload: "Datei anhängen"
+      upload_to_channel: "Auf %{title}hochladen"
+      upload_to_thread: "In Thread hochladen"
       uploaded_files:
         one: "%{count} Datei"
         other: "%{count} Dateien"
@@ -375,7 +393,7 @@ de:
           one: "Du, %{commaSeparatedUsernames} und %{count} andere haben reagiert mit :%{emoji}:"
           other: "Du, %{commaSeparatedUsernames} und %{count} andere haben reagiert mit :%{emoji}:"
         single_user: "%{username} haben reagiert mit :%{emoji}:"
-        multiple_users: "%{commaSeparatedUsernames} und %{username} reagierten mit:%{emoji}:"
+        multiple_users: "%{commaSeparatedUsernames} und %{username} reagierten mit :%{emoji}:"
         multiple_users_and_more:
           one: "%{commaSeparatedUsernames} und %{count} andere haben reagiert mit :%{emoji}:"
           other: "%{commaSeparatedUsernames} und %{count} andere haben reagiert mit :%{emoji}:"
@@ -384,6 +402,7 @@ de:
         italic_text: "hervorgehobener Text"
         bold_text: "fett gedruckter Text"
         code_text: "Code-Text"
+        send: "Senden"
       quote:
         original_channel: 'Ursprünglich gesendet in <a href="%{channelLink}">%{channel}</a>'
         copy_success: "Chat-Zitat in die Zwischenablage kopiert"
@@ -505,10 +524,33 @@ de:
         symbols: "Symbole"
         search_placeholder: "Nach Emoji-Namen und -Alias suchen …"
         no_results: "Keine Ergebnisse"
+      thread:
+        title: "Titel"
+        view_thread: Thread ansehen
+        default_title: "Thread"
+        replies:
+          one: "%{count} Antwort"
+          other: "%{count} Antworten"
+        label: Thread
+        close: "Thread schließen"
+        original_message:
+          started_by: "Gestartet von"
+        settings: "Einstellungen"
+        last_reply: "letzte Antw."
+        notifications:
+          regular:
+            title: "Normal"
+            description: "Du wirst benachrichtigt, wenn jemand deinen Namen mit @ in diesem Thread erwähnt."
+          tracking:
+            title: "Verfolgen"
+            description: "Die Anzahl der neuen Antworten auf diesen Thread wird in der Thread-Liste und im Kanal angezeigt. Du wirst benachrichtigt, wenn jemand deinen Namen mit @ in diesem Thema erwähnt."
+        participants_other_count:
+          one: "+%{count} anderer"
+          other: "+%{count} andere"
       threads:
-        op_said: "OP sagte:"
-        started_by: "Gestartet von"
         open: "Thread öffnen"
+        list: "Laufende Diskussionen"
+        none: "Du nimmst an keinem Thread in diesem Kanal teil."
       draft_channel_screen:
         header: "Neue Nachricht"
         cancel: "Abbrechen"
@@ -553,9 +595,8 @@ de:
       transcript:
         view: "Transkript früherer Nachrichten anzeigen"
       types:
-        reviewable_chat_message:
-          title: "Chat-Nachricht markiert"
-          flagged_by: "Markiert von"
+        chat_reviewable_message:
+          title: "Markierte Chat-Nachricht"
     keyboard_shortcuts_help:
       chat:
         title: "Chat"
@@ -568,6 +609,7 @@ de:
           composer_code: "%{shortcut} Code (nur Composer)"
           drawer_open: "%{shortcut} Chat-Bereich öffnen"
           drawer_close: "%{shortcut} Chat-Bereich schließen"
+          mark_all_channels_read: "%{shortcut} Alle Kanäle als gelesen markieren"
     topic_statuses:
       chat:
         help: "Der Chat ist für dieses Thema aktiviert"
@@ -586,3 +628,7 @@ de:
         chat_notifications_with_unread:
           one: "Chat-Benachrichtigungen – %{count} ungelesene Benachrichtigung"
           other: "Chat-Benachrichtigungen – %{count} ungelesene Benachrichtigungen"
+    styleguide:
+      sections:
+        chat:
+          title: Chat

@@ -78,7 +78,6 @@ nl:
       close: "Sluiten"
       collapse: "Chatlade samenvouwen"
       confirm_flag: "Weet je zeker dat je het bericht van %{username} wilt markeren?"
-      deleted: "Er is een bericht verwijderd. [weergeven]"
       hidden: "Er is een bericht verborgen. [weergeven]"
       delete: "Verwijderen"
       edited: "bewerkt"
@@ -105,6 +104,8 @@ nl:
       heading: "Chat"
       join: "Deelnemen"
       last_visit: "laatste bezoek"
+      summarization:
+        summarize: "Samenvatten"
       mention_warning:
         dismiss: "negeren"
         invitations_sent:
@@ -153,7 +154,6 @@ nl:
       restore: "Verwijderd bericht herstellen"
       save: "Opslaan"
       select: "Selecteren"
-      silence: "Gebruiker dempen"
       return_to_list: "Terug naar kanalenlijst"
       scroll_to_bottom: "Naar beneden scrollen"
       scroll_to_new_messages: "Nieuwe berichten weergeven"
@@ -252,6 +252,7 @@ nl:
         italic_text: "Cursieve tekst"
         bold_text: "Vetgedrukte tekst"
         code_text: "codetekst"
+        send: "Verzenden"
       quote:
         original_channel: 'Oorspronkelijk gestuurd in <a href="%{channelLink}">%{channel}</a>'
         copy_success: "Chatcitaat gekopieerd naar klembord"
@@ -362,6 +363,21 @@ nl:
         symbols: "Symbolen"
         search_placeholder: "Zoek op emojinaam en -alias..."
         no_results: "Geen resultaten"
+      thread:
+        title: "Titel"
+        replies:
+          one: "%{count} antwoord"
+          other: "%{count} antwoorden"
+        settings: "Instellingen"
+        last_reply: "laatste antwoord"
+        notifications:
+          regular:
+            title: "Normaal"
+          tracking:
+            title: "Tracking"
+        participants_other_count:
+          one: "+%{count} ander"
+          other: "+%{count} anderen"
       draft_channel_screen:
         header: "Nieuw bericht"
         cancel: "Annuleren"
@@ -406,9 +422,8 @@ nl:
       transcript:
         view: "Transcript van eerdere berichten weergeven"
       types:
-        reviewable_chat_message:
+        chat_reviewable_message:
           title: "Gemarkeerd chatbericht"
-          flagged_by: "Gemarkeerd door"
     keyboard_shortcuts_help:
       chat:
         title: "Chat"
@@ -439,3 +454,7 @@ nl:
         chat_notifications_with_unread:
           one: "Chatmeldingen - %{count} ongelezen melding"
           other: "Chatmeldingen - %{count} ongelezen meldingen"
+    styleguide:
+      sections:
+        chat:
+          title: Chat

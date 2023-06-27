@@ -6,6 +6,8 @@ Chat::Engine.routes.draw do
     get "/channels" => "channels#index"
     get "/channels/me" => "current_user_channels#index"
     post "/channels" => "channels#create"
+    put "/channels/read/" => "reads#update_all"
+    put "/channels/:channel_id/read/:message_id" => "reads#update"
     delete "/channels/:channel_id" => "channels#destroy"
     put "/channels/:channel_id" => "channels#update"
     get "/channels/:channel_id" => "channels#show"
@@ -26,7 +28,21 @@ Chat::Engine.routes.draw do
     # Hints for JIT warnings.
     get "/mentions/groups" => "hints#check_group_mentions", :format => :json
 
+    get "/channels/:channel_id/threads" => "channel_threads#index"
+    put "/channels/:channel_id/threads/:thread_id" => "channel_threads#update"
     get "/channels/:channel_id/threads/:thread_id" => "channel_threads#show"
+    put "/channels/:channel_id/threads/:thread_id/read" => "thread_reads#update"
+    put "/channels/:channel_id/threads/:thread_id/notifications-settings/me" =>
+          "channel_threads_current_user_notifications_settings#update"
+
+    put "/channels/:channel_id/messages/:message_id/restore" => "channel_messages#restore"
+    delete "/channels/:channel_id/messages/:message_id" => "channel_messages#destroy"
+
+    get "/channels/:channel_id/summarize" => "summaries#get_summary"
+  end
+
+  namespace :admin, defaults: { format: :json, constraints: StaffConstraint.new } do
+    post "export/messages" => "export#export_messages"
   end
 
   # direct_messages_controller routes
@@ -50,17 +66,12 @@ Chat::Engine.routes.draw do
   post "/enable" => "chat#enable_chat"
   post "/disable" => "chat#disable_chat"
   post "/dismiss-retention-reminder" => "chat#dismiss_retention_reminder"
-  get "/:chat_channel_id/messages" => "chat#messages"
   get "/message/:message_id" => "chat#message_link"
   put ":chat_channel_id/edit/:message_id" => "chat#edit_message"
   put ":chat_channel_id/react/:message_id" => "chat#react"
-  delete "/:chat_channel_id/:message_id" => "chat#delete"
   put "/:chat_channel_id/:message_id/rebake" => "chat#rebake"
   post "/:chat_channel_id/:message_id/flag" => "chat#flag"
   post "/:chat_channel_id/quote" => "chat#quote_messages"
-  put "/:chat_channel_id/restore/:message_id" => "chat#restore"
-  get "/lookup/:message_id" => "chat#lookup_message"
-  put "/:chat_channel_id/read/:message_id" => "chat#update_user_last_read"
   put "/user_chat_enabled/:user_id" => "chat#set_user_chat_status"
   put "/:chat_channel_id/invite" => "chat#invite_users"
   post "/drafts" => "chat#set_draft"

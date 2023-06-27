@@ -385,7 +385,7 @@ end
 
 task "uploads:stop_migration" => :environment do
   SiteSetting.migrate_to_new_scheme = false
-  puts "Migration stoped!"
+  puts "Migration stopped!"
 end
 
 task "uploads:analyze", %i[cache_path limit] => :environment do |_, args|
@@ -1200,13 +1200,7 @@ task "uploads:downsize" => :environment do
       if upload.local?
         Discourse.store.path_for(upload)
       else
-        (
-          begin
-            Discourse.store.download(upload, max_file_size_kb: 100.megabytes)
-          rescue StandardError
-            nil
-          end
-        )&.path
+        Discourse.store.download_safe(upload, max_file_size_kb: 100.megabytes)&.path
       end
 
     unless path

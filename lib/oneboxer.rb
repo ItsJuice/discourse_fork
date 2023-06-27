@@ -206,14 +206,14 @@ module Oneboxer
 
   def self.apply(string_or_doc, extra_paths: nil)
     doc = string_or_doc
-    doc = Loofah.fragment(doc) if doc.is_a?(String)
+    doc = Loofah.html5_fragment(doc) if doc.is_a?(String)
     changed = false
 
     each_onebox_link(doc, extra_paths: extra_paths) do |url, element|
       onebox, _ = yield(url, element)
       next if onebox.blank?
 
-      parsed_onebox = Loofah.fragment(onebox)
+      parsed_onebox = Loofah.html5_fragment(onebox)
       next if parsed_onebox.children.blank?
 
       changed = true
@@ -455,7 +455,7 @@ module Oneboxer
       args = {
         user_id: user.id,
         username: user.username,
-        avatar: PrettyText.avatar_img(user.avatar_template, "extra_large"),
+        avatar: PrettyText.avatar_img(user.avatar_template, "huge"),
         name: name,
         bio: user.user_profile.bio_excerpt(230),
         location: Onebox::Helpers.sanitize(user.user_profile.location),

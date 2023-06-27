@@ -55,12 +55,9 @@ class PostAlerter
 
     if user.push_subscriptions.exists?
       if user.seen_since?(SiteSetting.push_notification_time_window_mins.minutes.ago)
-        Jobs.enqueue_in(
-          SiteSetting.push_notification_time_window_mins.minutes,
-          :send_push_notification,
-          user_id: user.id,
-          payload: payload,
-        )
+        delay =
+          (SiteSetting.push_notification_time_window_mins - (Time.now - user.last_seen_at) / 60)
+        Jobs.enqueue_in(delay.minutes, :send_push_notification, user_id: user.id, payload: payload)
       else
         Jobs.enqueue(:send_push_notification, user_id: user.id, payload: payload)
       end
@@ -154,8 +151,15 @@ class PostAlerter
 
       expand_group_mentions(mentioned_groups, post) do |group, users|
         users = only_allowed_users(users, post)
+        to_notify =
+          DiscoursePluginRegistry.apply_modifier(
+            :expand_group_mention_users,
+            users - notified,
+            group,
+          )
+
         notified +=
-          notify_users(users - notified, :group_mentioned, post, mentioned_opts.merge(group: group))
+          notify_users(to_notify, :group_mentioned, post, mentioned_opts.merge(group: group))
       end
 
       if mentioned_here
@@ -196,10 +200,14 @@ class PostAlerter
 
     DiscourseEvent.trigger(:post_alerter_before_post, post, new_record, notified)
 
+    if !SiteSetting.watched_precedence_over_muted
+      notified = notified + category_or_tag_muters(post.topic)
+    end
+
     if new_record
       if post.topic.private_message?
         # private messages
-        notified += notify_pm_users(post, reply_to_user, quoted_users, notified)
+        notified += notify_pm_users(post, reply_to_user, quoted_users, notified, new_record)
       elsif notify_about_reply?(post)
         # posts
         notified +=
@@ -259,6 +267,18 @@ class PostAlerter
       .category_users
       .where(notification_level: CategoryUser.notification_levels[:watching_first_post])
       .pluck(:user_id)
+  end
+
+  def category_or_tag_muters(topic)
+    User
+      .joins(
+        "LEFT JOIN category_users ON users.id = category_users.user_id AND category_users.category_id = #{topic.category_id.to_i} AND category_users.notification_level = #{CategoryUser.notification_levels[:muted].to_i}",
+      )
+      .joins("LEFT JOIN topic_tags ON topic_tags.topic_id = #{topic.id.to_i}")
+      .joins(
+        "LEFT JOIN tag_users ON users.id = tag_users.user_id AND tag_users.tag_id = topic_tags.tag_id AND tag_users.notification_level = #{TagUser.notification_levels[:muted].to_i}",
+      )
+      .where("category_users.id IS NOT NULL OR tag_users.id IS NOT NULL")
   end
 
   def notify_first_post_watchers(post, user_ids, notified = nil)
@@ -385,7 +405,7 @@ class PostAlerter
     stats = (@group_stats[topic.id] ||= group_stats(topic))
     return unless stats
 
-    group_id = topic.topic_allowed_groups.where(group_id: user.groups.pluck(:id)).pick(:group_id)
+    group_id = topic.topic_allowed_groups.where(group_id: user.groups).pick(:group_id)
 
     stat = stats.find { |s| s[:group_id] == group_id }
     return unless stat
@@ -584,6 +604,9 @@ class PostAlerter
     end
 
     # Create the notification
+    notification_data =
+      DiscoursePluginRegistry.apply_modifier(:notification_data, notification_data)
+
     created =
       user.notifications.consolidate_or_create!(
         notification_type: type,
@@ -727,7 +750,7 @@ class PostAlerter
     end
   end
 
-  def notify_pm_users(post, reply_to_user, quoted_users, notified)
+  def notify_pm_users(post, reply_to_user, quoted_users, notified, new_record = false)
     return [] unless post.topic
 
     warn_if_not_sidekiq
@@ -764,7 +787,12 @@ class PostAlerter
       when TopicUser.notification_levels[:watching]
         create_pm_notification(user, post, emails_to_skip_send)
       when TopicUser.notification_levels[:tracking]
-        if is_replying?(user, reply_to_user, quoted_users)
+        # TopicUser is the canonical source of topic notification levels, except for
+        # new topics created within a group with default notification level set to
+        # `watching_first_post`. TopicUser notification level is set to `tracking`
+        # for these.
+        if is_replying?(user, reply_to_user, quoted_users) ||
+             (new_record && group_watched_first_post?(user, post))
           create_pm_notification(user, post, emails_to_skip_send)
         else
           notify_group_summary(user, post.topic)
@@ -1011,5 +1039,9 @@ class PostAlerter
       topic_id: topic.id,
       notification_level: TopicUser.notification_levels[:watching],
     )
+  end
+
+  def group_watched_first_post?(user, post)
+    post.is_first_post? && group_watchers(post.topic).include?(user.id)
   end
 end

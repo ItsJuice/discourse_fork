@@ -2,20 +2,39 @@
 
 module Chat
   class View
-    attr_reader :user, :chat_channel, :chat_messages, :can_load_more_past, :can_load_more_future
+    attr_reader :user,
+                :chat_channel,
+                :chat_messages,
+                :can_load_more_past,
+                :can_load_more_future,
+                :unread_thread_ids,
+                :threads,
+                :tracking,
+                :thread_memberships,
+                :thread_participants
 
     def initialize(
       chat_channel:,
       chat_messages:,
       user:,
       can_load_more_past: nil,
-      can_load_more_future: nil
+      can_load_more_future: nil,
+      unread_thread_ids: nil,
+      threads: nil,
+      tracking: nil,
+      thread_memberships: nil,
+      thread_participants: nil
     )
       @chat_channel = chat_channel
       @chat_messages = chat_messages
       @user = user
       @can_load_more_past = can_load_more_past
       @can_load_more_future = can_load_more_future
+      @unread_thread_ids = unread_thread_ids
+      @threads = threads
+      @tracking = tracking
+      @thread_memberships = thread_memberships
+      @thread_participants = thread_participants
     end
 
     def reviewable_ids
@@ -56,7 +75,7 @@ module Chat
           sql,
           pending: ReviewableScore.statuses[:pending],
           message_ids: @chat_messages.map(&:id),
-          target_type: Chat::Message.sti_name,
+          target_type: Chat::Message.polymorphic_name,
         )
         .each { |row| ids[row.target_id] = row.reviewable_id }
 
@@ -85,7 +104,7 @@ module Chat
           sql,
           message_ids: @chat_messages.map(&:id),
           user_id: @user.id,
-          target_type: Chat::Message.sti_name,
+          target_type: Chat::Message.polymorphic_name,
         )
         .each { |row| statuses[row.target_id] = row.status }
 

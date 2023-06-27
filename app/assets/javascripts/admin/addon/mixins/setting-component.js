@@ -27,6 +27,7 @@ const CUSTOM_TYPES = [
   "upload",
   "group_list",
   "tag_list",
+  "tag_group_list",
   "color",
   "simple_list",
   "emoji_list",
@@ -66,8 +67,8 @@ const DEFAULT_USER_PREFERENCES = [
   "default_tags_watching_first_post",
   "default_text_size",
   "default_title_count_mode",
-  "default_sidebar_categories",
-  "default_sidebar_tags",
+  "default_navigation_menu_categories",
+  "default_navigation_menu_tags",
 ];
 
 export default Mixin.create({
@@ -214,8 +215,15 @@ export default Mixin.create({
         this.afterSave();
       }
     } catch (e) {
-      if (e.jqXHR?.responseJSON?.errors) {
-        this.set("validationMessage", e.jqXHR.responseJSON.errors[0]);
+      const json = e.jqXHR?.responseJSON;
+      if (json?.errors) {
+        let errorString = json.errors[0];
+
+        if (json.html_message) {
+          errorString = htmlSafe(errorString);
+        }
+
+        this.set("validationMessage", errorString);
       } else {
         this.set("validationMessage", I18n.t("generic_error"));
       }

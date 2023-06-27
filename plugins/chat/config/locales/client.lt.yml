@@ -26,6 +26,8 @@ lt:
       flag: "Pranešti"
       join: "Prisijungti"
       last_visit: "paskutinis apsilankymas"
+      summarization:
+        summarize: "Apibendrinti"
       mention_warning:
         dismiss: "praleisti"
       reply: "Atsakyti"
@@ -68,6 +70,7 @@ lt:
       composer:
         italic_text: "pasviras tekstas"
         bold_text: "paryškintas tekstas"
+        send: "Siųsti"
       notification_levels:
         never: "Niekada"
       settings:
@@ -104,6 +107,20 @@ lt:
         activities: "Veikla"
         flags: "Pažymėk!"
         symbols: "Simboliai"
+      thread:
+        title: "Antraštė"
+        replies:
+          one: "%{count} atsakymas"
+          few: "%{count} atsakymai"
+          many: "%{count} atsakymai"
+          other: "%{count} atsakymai"
+        settings: "Nustatymai"
+        last_reply: "Paskutinis atsakymas"
+        notifications:
+          regular:
+            title: "Įprastas"
+          tracking:
+            title: "Seku"
       draft_channel_screen:
         header: "Nauja žinutė"
         cancel: "Atšaukti"
@@ -115,7 +132,3 @@ lt:
           fields:
             message:
               label: Žinutės
-    review:
-      types:
-        reviewable_chat_message:
-          flagged_by: "Pažymėjo"

@@ -15,6 +15,7 @@ sv:
           actions:
             chat_channel_status_change: "Chattkanalens status har ändrats"
             chat_channel_delete: "Chattkanal raderad"
+            chat_auto_remove_membership: "Medlemskap tas automatiskt bort från kanaler"
       api:
         scopes:
           descriptions:
@@ -81,8 +82,11 @@ sv:
       click_to_join: "Klicka här för att se tillgängliga kanaler."
       close: "Stäng"
       collapse: "Komprimera chattruta"
+      expand: "Expandera chattlådan"
       confirm_flag: "Är du säker på att du vill flagga %{username}:s meddelande?"
-      deleted: "Ett meddelande raderades. [view]"
+      deleted:
+        one: "Ett meddelande raderades. [view]"
+        other: "%{count} meddelanden raderades. [visa alla]"
       hidden: "Ett meddelande doldes. [view]"
       delete: "Radera"
       edited: "redigerad"
@@ -112,6 +116,8 @@ sv:
       heading: "Chatt"
       join: "Gå med"
       last_visit: "senaste besök"
+      summarization:
+        summarize: "Sammanfatta"
       mention_warning:
         dismiss: "avfärda"
         cannot_see: "%{username} kan inte komma åt den här kanalen och har inte aviserats."
@@ -208,6 +214,7 @@ sv:
         composer: "Chattkompositör"
         channels_list: "Lista över chattkanaler"
       no_public_channels: "Du har inte gått med i några kanaler."
+      kicked_from_channel: "Du har inte längre tillgång till den här kanalen."
       only_chat_push_notifications:
         title: "Skicka bara push-meddelanden för chatt"
         description: "Blockera alla push-meddelanden som inte är chattmeddelanden från att skickas"
@@ -219,7 +226,8 @@ sv:
       close_full_page: "Stäng helskärmschatt"
       open_message: "Öppna meddelande i chatten"
       placeholder_self: "Gör en anteckning"
-      placeholder_channel: "Chatta med %{channelName}"
+      placeholder_channel: "Chatta i %{channelName}"
+      placeholder_thread: "Chatta i tråden"
       placeholder_users: "Chatta med %{commaSeparatedNames}"
       placeholder_new_message_disallowed:
         archived: "Kanalen är arkiverad, och du kan inte skicka nya meddelanden just nu."
@@ -243,8 +251,11 @@ sv:
       restore: "Återställ raderat meddelande"
       save: "Spara"
       select: "Välj"
-      silence: "Tysta användare"
       return_to_list: "Återgå till listan över kanaler"
+      return_to_threads_list: "Gå tillbaka till pågående diskussioner"
+      unread_threads_count:
+        one: "Du har %{count} oläst diskussion"
+        other: "Du har %{count} olästa diskussioner"
       scroll_to_bottom: "Scrolla till botten"
       scroll_to_new_messages: "Se nya meddelanden"
       sound:
@@ -256,6 +267,8 @@ sv:
       title: "chatt"
       title_capitalized: "Chatt"
       upload: "Bifoga en fil"
+      upload_to_channel: "Ladda upp till %{title}"
+      upload_to_thread: "Ladda upp till tråd"
       uploaded_files:
         one: "%{count} fil"
         other: "%{count} filer"
@@ -384,6 +397,7 @@ sv:
         italic_text: "kursiv text"
         bold_text: "fet text"
         code_text: "kod text"
+        send: "Skicka"
       quote:
         original_channel: 'Ursprungligen skickad i <a href="%{channelLink}">%{channel}</a>'
         copy_success: "Chattcitat kopierat till urklipp"
@@ -505,10 +519,31 @@ sv:
         symbols: "Symboler"
         search_placeholder: "Sök efter emojinamn och alias..."
         no_results: "Inga resultat"
+      thread:
+        title: "Rubrik"
+        view_thread: Visa tråd
+        default_title: "Tråd"
+        replies:
+          one: "%{count} svar"
+          other: "%{count} svar"
+        label: Tråd
+        close: "Stäng tråd"
+        original_message:
+          started_by: "Startad av"
+        settings: "Webbplatsinställningar"
+        last_reply: "senaste svar"
+        notifications:
+          regular:
+            title: "Normal"
+          tracking:
+            title: "Följer"
+        participants_other_count:
+          one: "+%{count} annan"
+          other: "+%{count} andra"
       threads:
-        op_said: "OP sa:"
-        started_by: "Startad av"
         open: "Öppna tråd"
+        list: "Pågående diskussioner"
+        none: "Du deltar inte i några trådar i den här kanalen."
       draft_channel_screen:
         header: "Nytt meddelande"
         cancel: "Avbryt"
@@ -553,9 +588,8 @@ sv:
       transcript:
         view: "Visa tidigare meddelandens avskrift"
       types:
-        reviewable_chat_message:
+        chat_reviewable_message:
           title: "Flaggat chattmeddelande"
-          flagged_by: "Flaggat av"
     keyboard_shortcuts_help:
       chat:
         title: "Chatt"
@@ -568,6 +602,7 @@ sv:
           composer_code: "%{shortcut} Kod (endast kompositör)"
           drawer_open: "%{shortcut} Öppna chattmenyn"
           drawer_close: "%{shortcut} Stäng chattmenyn"
+          mark_all_channels_read: "%{shortcut} Markera alla kanaler som lästa"
     topic_statuses:
       chat:
         help: "Chatt är aktiverat för detta ämne"
@@ -586,3 +621,7 @@ sv:
         chat_notifications_with_unread:
           one: "Chattaviseringar - %{count} oläst avisering"
           other: "Chattaviseringar - %{count} olästa aviseringar"
+    styleguide:
+      sections:
+        chat:
+          title: Chatt

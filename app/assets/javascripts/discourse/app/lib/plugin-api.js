@@ -58,19 +58,18 @@ import { addPluginReviewableParam } from "discourse/components/reviewable-item";
 import {
   addComposerSaveErrorCallback,
   addPopupMenuOptionsCallback,
-} from "discourse/controllers/composer";
+} from "discourse/services/composer";
 import { addPostClassesCallback } from "discourse/widgets/post";
 import {
   addGroupPostSmallActionCode,
   addPostSmallActionClassesCallback,
   addPostSmallActionIcon,
 } from "discourse/widgets/post-small-action";
-import { addQuickAccessProfileItem } from "discourse/widgets/quick-access-profile";
 import { addTagsHtmlCallback } from "discourse/lib/render-tags";
 import { addToolbarCallback } from "discourse/components/d-editor";
 import { addTopicParticipantClassesCallback } from "discourse/widgets/topic-map";
 import { addTopicTitleDecorator } from "discourse/components/topic-title";
-import { addUserMenuGlyph } from "discourse/widgets/user-menu";
+import { addUserMenuProfileTabItem } from "discourse/components/user-menu/profile-tab-content";
 import { addUsernameSelectorDecorator } from "discourse/helpers/decorate-username-selector";
 import { addWidgetCleanCallback } from "discourse/components/mount-widget";
 import deprecated from "discourse-common/lib/deprecated";
@@ -95,28 +94,38 @@ import { replaceTagRenderer } from "discourse/lib/render-tag";
 import { registerCustomLastUnreadUrlCallback } from "discourse/models/topic";
 import { setNewCategoryDefaultColors } from "discourse/routes/new-category";
 import { addSearchResultsCallback } from "discourse/lib/search";
+import { addOnKeyDownCallback } from "discourse/widgets/search-menu";
 import {
   addQuickSearchRandomTip,
   addSearchSuggestion,
+  removeDefaultQuickSearchRandomTips,
 } from "discourse/widgets/search-menu-results";
+import { addSearchSuggestion as addGlimmerSearchSuggestion } from "discourse/components/search-menu/results/assistant";
 import { CUSTOM_USER_SEARCH_OPTIONS } from "select-kit/components/user-chooser";
 import { downloadCalendar } from "discourse/lib/download-calendar";
 import { consolePrefix } from "discourse/lib/source-identifier";
 import { addSectionLink as addCustomCommunitySectionLink } from "discourse/lib/sidebar/custom-community-section-links";
 import { addSidebarSection } from "discourse/lib/sidebar/custom-sections";
-import { registerCustomCountable as registerUserCategorySectionLinkCountable } from "discourse/lib/sidebar/user/categories-section/category-section-link";
+import {
+  registerCustomCategoryLockIcon,
+  registerCustomCategorySectionLinkPrefix,
+  registerCustomCountable as registerUserCategorySectionLinkCountable,
+} from "discourse/lib/sidebar/user/categories-section/category-section-link";
+import { registerCustomTagSectionLinkPrefixIcon } from "discourse/lib/sidebar/user/tags-section/base-tag-section-link";
 import { REFRESH_COUNTS_APP_EVENT_NAME as REFRESH_USER_SIDEBAR_CATEGORIES_SECTION_COUNTS_APP_EVENT_NAME } from "discourse/components/sidebar/user/categories-section";
 import DiscourseURL from "discourse/lib/url";
 import { registerNotificationTypeRenderer } from "discourse/lib/notification-types-manager";
 import { registerUserMenuTab } from "discourse/lib/user-menu/tab";
 import { registerModelTransformer } from "discourse/lib/model-transformers";
 import { registerCustomUserNavMessagesDropdownRow } from "discourse/controllers/user-private-messages";
+import { registerFullPageSearchType } from "discourse/controllers/full-page-search";
+import { registerHashtagType } from "discourse/lib/hashtag-autocomplete";
 
 // If you add any methods to the API ensure you bump up the version number
 // based on Semantic Versioning 2.0.0. Please update the changelog at
 // docs/CHANGELOG-JAVASCRIPT-PLUGIN-API.md whenever you change the version
 // using the format described at https://keepachangelog.com/en/1.0.0/.
-const PLUGIN_API_VERSION = "1.6.0";
+export const PLUGIN_API_VERSION = "1.6.1";
 
 // This helper prevents us from applying the same `modifyClass` over and over in test mode.
 function canModify(klass, type, resolverName, changes) {
@@ -183,11 +192,15 @@ class PluginApi {
   _resolveClass(resolverName, opts) {
     opts = opts || {};
 
-    if (this.container.cache[resolverName]) {
+    if (
+      this.container.cache[resolverName] ||
+      (resolverName === "model:user" &&
+        this.container.lookup("service:current-user"))
+    ) {
       // eslint-disable-next-line no-console
       console.warn(
         consolePrefix(),
-        `"${resolverName}" was already cached in the container. Changes won't be applied.`
+        `"${resolverName}" has already been initialized and registered as a singleton. Move the modifyClass call earlier in the boot process for changes to take effect. https://meta.discourse.org/t/262064`
       );
     }
 
@@ -562,7 +575,17 @@ class PluginApi {
   attachWidgetAction(widget, actionName, fn) {
     const widgetClass =
       queryRegistry(widget) ||
-      this.container.factoryFor(`widget:${widget}`).class;
+      this.container.factoryFor(`widget:${widget}`)?.class;
+
+    if (!widgetClass) {
+      // eslint-disable-next-line no-console
+      console.error(
+        consolePrefix(),
+        `attachWidgetAction: Could not find widget ${widget} in registry`
+      );
+      return;
+    }
+
     widgetClass.prototype[actionName] = fn;
   }
 
@@ -979,7 +1002,7 @@ class PluginApi {
   }
 
   /**
-   * Adds a glyph to user menu after bookmarks
+   * Adds a glyph to the legacy user menu after bookmarks
    * WARNING: there is limited space there
    *
    * example:
@@ -991,9 +1014,13 @@ class PluginApi {
    *    data: { url: `/some/path` },
    * });
    *
+   * To customize the new user menu, see api.registerUserMenuTab
    */
-  addUserMenuGlyph(glyph) {
-    addUserMenuGlyph(glyph);
+  addUserMenuGlyph() {
+    deprecated(
+      "addUserMenuGlyph has been removed. Use api.registerUserMenuTab instead.",
+      { id: "discourse.add-user-menu-glyph" }
+    );
   }
 
   /**
@@ -1066,7 +1093,7 @@ class PluginApi {
    *   customFilter: (category, args, router) => { return category && category.name !== 'bug' }
    *   customHref: (category, args, router) => {  if (category && category.name) === 'not-a-bug') return "/a-feature"; },
    *   before: "top",
-   *   forceActive(category, args, router) => router.currentURL === "/a/b/c/d";
+   *   forceActive: (category, args, router) => router.currentURL === "/a/b/c/d",
    * })
    */
   addNavigationBarItem(item) {
@@ -1559,7 +1586,7 @@ class PluginApi {
    *
    **/
   addQuickAccessProfileItem(item) {
-    addQuickAccessProfileItem(item);
+    addUserMenuProfileTabItem(item);
   }
 
   addFeaturedLinkMetaDecorator(decorator) {
@@ -1641,6 +1668,7 @@ class PluginApi {
    */
   addSearchSuggestion(value) {
     addSearchSuggestion(value);
+    addGlimmerSearchSuggestion(value);
   }
 
   /**
@@ -1661,6 +1689,25 @@ class PluginApi {
   }
 
   /**
+   * Add a function to be called when there is a keyDown even on the search-menu widget.
+   * This function runs before the default logic, and if one callback returns a falsey value
+   * the logic chain will stop, to prevent the core behavior from occuring.
+   *
+   * Example usage:
+   * ```
+   * api.addSearchMenuOnKeyDownCallback((searchMenu, event) => {
+   *  if (searchMenu.term === "stop") {
+   *    return false;
+   *  }
+   * });
+   * ```
+   *
+   */
+  addSearchMenuOnKeyDownCallback(fn) {
+    addOnKeyDownCallback(fn);
+  }
+
+  /**
    * Add a quick search tip shown randomly when the search dropdown is invoked on desktop.
    *
    * Example usage:
@@ -1677,6 +1724,19 @@ class PluginApi {
    */
   addQuickSearchRandomTip(tip) {
     addQuickSearchRandomTip(tip);
+  }
+
+  /**
+   * Remove the default quick search tips shown randomly when the search dropdown is invoked on desktop.
+   *
+   * Usage:
+   * ```
+   * api.removeDefaultQuickSearchRandomTips();
+   * ```
+   *
+   */
+  removeDefaultQuickSearchRandomTips(tip) {
+    removeDefaultQuickSearchRandomTips(tip);
   }
 
   /**
@@ -1801,10 +1861,11 @@ class PluginApi {
    *
    * @param {(addCommunitySectionLinkCallback|Object)} arg - A callback function or an Object.
    * @param {string} arg.name - The name of the link. Needs to be dasherized and lowercase.
-   * @param {string=} arg.route - The Ember route name to generate the href attribute for the link.
-   * @param {string=} arg.href - The href attribute for the link.
    * @param {string} arg.title - The title attribute for the link.
    * @param {string} arg.text - The text to display for the link.
+   * @param {string} [arg.route] - The Ember route name to generate the href attribute for the link.
+   * @param {string} [arg.href] - The href attribute for the link.
+   * @param {string} [arg.icon] - The FontAwesome icon to display for the link.
    * @param {Boolean} [secondary] - Determines whether the section link should be added to the main or secondary section in the "More..." links drawer.
    */
   addCommunitySectionLink(arg, secondary) {
@@ -1857,7 +1918,7 @@ class PluginApi {
    * @param {Object} arg - An object
    * @param {string} arg.badgeTextFunction - Function used to generate the text for the badge displayed in the section link.
    * @param {string} arg.route - The Ember route name to generate the href attribute for the link.
-   * @param {Object=} arg.routeQuery - Object representing the query params that should be appended to the route generated.
+   * @param {Object} [arg.routeQuery] - Object representing the query params that should be appended to the route generated.
    * @param {shouldRegister} arg.shouldRegister - Function used to determine if the countable should be registered for the category.
    * @param {refreshCountFunction} arg.refreshCountFunction - Function used to calculate the value used to set the property for the count whenever the sidebar section link refreshes.
    * @param {prioritizeOverDefaults} args.prioritizeOverDefaults - Function used to determine whether the countable should be prioritized over the default countables of unread/new.
@@ -1877,6 +1938,87 @@ class PluginApi {
       shouldRegister,
       refreshCountFunction,
       prioritizeOverDefaults,
+    });
+  }
+
+  /**
+   * EXPERIMENTAL. Do not use.
+   * Changes the lock icon used for a sidebar category section link to indicate that a category is read restricted.
+   *
+   * @param {String} Name of a FontAwesome 5 icon
+   */
+  registerCustomCategorySectionLinkLockIcon(icon) {
+    return registerCustomCategoryLockIcon(icon);
+  }
+
+  /**
+   * EXPERIMENTAL. Do not use.
+   * Register a custom prefix for a sidebar category section link.
+   *
+   * Example:
+   *
+   * ```
+   * api.registerCustomCategorySectionLinkPrefix({
+   *   categoryId: category.id,
+   *   prefixType: "icon",
+   *   prefixValue: "wrench",
+   *   prefixColor: "FF0000"
+   * })
+   * ```
+   *
+   * @params {Object} arg - An object
+   * @params {string} arg.categoryId - The id of the category
+   * @params {string} arg.prefixType - The type of prefix to use. Can be "icon", "image", "text" or "span".
+   * @params {string} arg.prefixValue - The value of the prefix to use.
+   *                                    For "icon", pass in the name of a FontAwesome 5 icon.
+   *                                    For "image", pass in the src of the image.
+   *                                    For "text", pass in the text to display.
+   *                                    For "span", pass in an array containing two hex color values. Example: `[FF0000, 000000]`.
+   * @params {string} arg.prefixColor - The color of the prefix to use. Example: "FF0000".
+   */
+  registerCustomCategorySectionLinkPrefix({
+    categoryId,
+    prefixType,
+    prefixValue,
+    prefixColor,
+  }) {
+    registerCustomCategorySectionLinkPrefix({
+      categoryId,
+      prefixType,
+      prefixValue,
+      prefixColor,
+    });
+  }
+
+  /**
+   * EXPERIMENTAL. Do not use.
+   * Register a custom prefix for a sidebar tag section link.
+   *
+   * Example:
+   *
+   * ```
+   * api.registerCustomTagSectionLinkPrefixValue({
+   *   tagName: "tag1",
+   *   prefixType: "icon",
+   *   prefixValue: "wrench",
+   *   prefixColor: "#FF0000"
+   * });
+   * ```
+   *
+   * @params {Object} arg - An object
+   * @params {string} arg.tagName - The name of the tag
+   * @params {string} arg.prefixValue - The name of a FontAwesome 5 icon.
+   * @params {string} arg.prefixColor - The color represented using hexadecimal to use for the prefix. Example: "#FF0000" or "#FFF".
+   */
+  registerCustomTagSectionLinkPrefixIcon({
+    tagName,
+    prefixValue,
+    prefixColor,
+  }) {
+    registerCustomTagSectionLinkPrefixIcon({
+      tagName,
+      prefixValue,
+      prefixColor,
     });
   }
 
@@ -2047,7 +2189,6 @@ class PluginApi {
   }
 
   /**
-   * EXPERIMENTAL. Do not use.
    * Registers a new tab in the user menu. This API method expects a callback
    * that should return a class inheriting from the class (UserMenuTab) that's
    * passed to the callback. See discourse/app/lib/user-menu/tab.js for
@@ -2056,9 +2197,9 @@ class PluginApi {
    * ```
    * api.registerUserMenuTab((UserMenuTab) => {
    *   return class extends UserMenuTab {
-   *     get id() {
-   *       return "custom-tab-id";
-   *     }
+   *     id = "custom-tab-id";
+   *     panelComponent = MyCustomPanelGlimmerComponent;
+   *     icon = "some-fa5-icon";
    *
    *     get shouldDisplay() {
    *       return this.siteSettings.enable_custom_tab && this.currentUser.admin;
@@ -2066,14 +2207,6 @@ class PluginApi {
    *
    *     get count() {
    *       return this.currentUser.my_custom_notification_count;
-   *     }
-   *
-   *     get panelComponent() {
-   *       return "your-custom-glimmer-component";
-   *     }
-   *
-   *     get icon() {
-   *       return "some-fa5-icon";
    *     }
    *   }
    * });
@@ -2131,6 +2264,30 @@ class PluginApi {
    */
   addUserMessagesNavigationDropdownRow(routeName, name, icon) {
     registerCustomUserNavMessagesDropdownRow(routeName, name, icon);
+  }
+
+  /**
+   * EXPERIMENTAL. Do not use.
+   * Adds a new search type which can be selected when visiting the full page search UI.
+   *
+   * @param {string} translationKey
+   * @param {string} searchTypeId
+   * @param {function} searchFunc - Available arguments: fullPage controller, search args, searchKey.
+   */
+  addFullPageSearchType(translationKey, searchTypeId, searchFunc) {
+    registerFullPageSearchType(translationKey, searchTypeId, searchFunc);
+  }
+
+  /**
+   * Registers a hastag type and its corresponding class.
+   * This is used when generating CSS classes in the hashtag-css-generator.
+   *
+   * @param {string} type - The type of the hashtag.
+   * @param {Class} typeClassInstance - The initialized class of the hashtag type, which
+   *  needs the `container`.
+   */
+  registerHashtagType(type, typeClassInstance) {
+    registerHashtagType(type, typeClassInstance);
   }
 }
 

@@ -27,7 +27,6 @@ const SERVER_SIDE_ONLY = [
   /^\/raw\/\d+/,
   /\.rss$/,
   /\.json$/,
-  /^\/admin\/upgrade$/,
   /^\/logs($|\/)/,
   /^\/admin\/customize\/watched_words\/action\/[^\/]+\/download$/,
   /^\/pub\//,
@@ -156,6 +155,10 @@ const DiscourseURL = EmberObject.extend({
   },
 
   replaceState(path) {
+    if (path.startsWith("#")) {
+      path = this.router.currentURL.replace(/#.*$/, "") + path;
+    }
+
     if (this.router.currentURL !== path) {
       // Always use replaceState in the next runloop to prevent weird routes changing
       // while URLs are loading. For example, while a topic loads it sets `currentPost`
@@ -410,7 +413,7 @@ const DiscourseURL = EmberObject.extend({
   },
 
   get isComposerOpen() {
-    return this.controllerFor("composer")?.visible;
+    return this.container.lookup("service:composer")?.visible;
   },
 
   get router() {

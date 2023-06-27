@@ -17,9 +17,22 @@ module PageObjects
         visit("/chat")
       end
 
-      def visit_channel(channel, mobile: false)
-        visit(channel.url + (mobile ? "?mobile_view=1" : ""))
-        has_no_css?(".not-loaded-once")
+      def has_drawer?(channel_id: nil, expanded: true)
+        drawer?(expectation: true, channel_id: channel_id, expanded: expanded)
+      end
+
+      def has_no_drawer?(channel_id: nil, expanded: true)
+        drawer?(expectation: false, channel_id: channel_id, expanded: expanded)
+      end
+
+      def visit_channel(channel, message_id: nil)
+        visit(channel.url + (message_id ? "/#{message_id}" : ""))
+        has_no_css?(".chat-channel--not-loaded-once")
+        has_no_css?(".chat-skeleton")
+      end
+
+      def visit_thread(thread)
+        visit(thread.url)
         has_no_css?(".chat-skeleton")
       end
 
@@ -39,8 +52,11 @@ module PageObjects
         visit(channel.url + "/info")
       end
 
-      def visit_browse
-        visit("/chat/browse")
+      def visit_browse(filter = nil)
+        url = "/chat/browse"
+        url += "/" + filter.to_s if filter
+        visit(url)
+        PageObjects::Pages::ChatBrowse.new.has_finished_loading?
       end
 
       def minimize_full_page
@@ -53,12 +69,27 @@ module PageObjects
         container.has_content?(message.user.username)
       end
 
+      NEW_CHANNEL_BUTTON_SELECTOR = ".new-channel-btn"
+
       def new_channel_button
-        find(".new-channel-btn")
+        find(NEW_CHANNEL_BUTTON_SELECTOR)
       end
 
       def has_new_channel_button?
-        has_css?(".new-channel-btn")
+        has_css?(NEW_CHANNEL_BUTTON_SELECTOR)
+      end
+
+      def has_no_new_channel_button?
+        has_no_css?(NEW_CHANNEL_BUTTON_SELECTOR)
+      end
+
+      private
+
+      def drawer?(expectation:, channel_id: nil, expanded: true)
+        selector = ".chat-drawer"
+        selector += ".is-expanded" if expanded
+        selector += "[data-chat-channel-id=\"#{channel_id}\"]" if channel_id
+        expectation ? has_css?(selector) : has_no_css?(selector)
       end
     end
   end

@@ -11,10 +11,11 @@ const discourseScss = require("./lib/discourse-scss");
 const generateScriptsTree = require("./lib/scripts");
 const funnel = require("broccoli-funnel");
 const DeprecationSilencer = require("./lib/deprecation-silencer");
+const generateWorkboxTree = require("./lib/workbox-tree-builder");
 
 module.exports = function (defaults) {
-  let discourseRoot = resolve("../../../..");
-  let vendorJs = discourseRoot + "/vendor/assets/javascripts/";
+  const discourseRoot = resolve("../../../..");
+  const vendorJs = discourseRoot + "/vendor/assets/javascripts/";
 
   // Silence deprecations which we are aware of - see `lib/deprecation-silencer.js`
   const ui = defaults.project.ui;
@@ -24,7 +25,7 @@ module.exports = function (defaults) {
   const isProduction = EmberApp.env().includes("production");
   const isTest = EmberApp.env().includes("test");
 
-  let app = new EmberApp(defaults, {
+  const app = new EmberApp(defaults, {
     autoRun: false,
     "ember-qunit": {
       insertContentForTestBody: false,
@@ -36,9 +37,6 @@ module.exports = function (defaults) {
       enabled: true,
     },
     autoImport: {
-      alias: {
-        "virtual-dom": "@discourse/virtual-dom",
-      },
       forbidEval: true,
       insertScriptsAt: "ember-auto-import-scripts",
       webpack: {
@@ -51,6 +49,8 @@ module.exports = function (defaults) {
           fallback: {
             // Sinon needs a `util` polyfill
             util: require.resolve("util/"),
+            // Also for sinon
+            timers: false,
           },
         },
         module: {
@@ -127,7 +127,7 @@ module.exports = function (defaults) {
       annotation: "TreeMerger (appTestTrees)",
     });
 
-    let tests = concat(appTestTrees, {
+    const tests = concat(appTestTrees, {
       inputFiles: ["**/tests/**/*-test.js"],
       headerFiles: ["vendor/ember-cli/tests-prefix.js"],
       footerFiles: ["vendor/ember-cli/app-config.js"],
@@ -136,7 +136,7 @@ module.exports = function (defaults) {
       sourceMapConfig: false,
     });
 
-    let testHelpers = concat(appTestTrees, {
+    const testHelpers = concat(appTestTrees, {
       inputFiles: [
         "**/tests/test-boot-ember-cli.js",
         "**/tests/helpers/**/*.js",
@@ -162,16 +162,6 @@ module.exports = function (defaults) {
       return mergeTrees([tests, testHelpers]);
     }
   };
-
-  // @ember/jquery introduces a shim which triggers the ember-global deprecation.
-  // We remove that shim, and re-implement ourselves in the deprecate-jquery-integration pre-initializer
-  const vendorScripts = app._scriptOutputFiles["/assets/vendor.js"];
-  const componentDollarShimIndex = vendorScripts.indexOf(
-    "vendor/jquery/component.dollar.js"
-  );
-  if (componentDollarShimIndex) {
-    vendorScripts.splice(componentDollarShimIndex, 1);
-  }
 
   // WARNING: We should only import scripts here if they are not in NPM.
   // For example: our very specific version of bootstrap-modal.
@@ -204,6 +194,7 @@ module.exports = function (defaults) {
       files: ["highlight-test-bundle.min.js"],
       destDir: "assets/highlightjs",
     }),
+    generateWorkboxTree(),
     applyTerser(
       concat(mergeTrees([app.options.adminTree]), {
         inputFiles: ["**/*.js"],

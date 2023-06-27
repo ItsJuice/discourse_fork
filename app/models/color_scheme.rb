@@ -7,7 +7,7 @@ class ColorScheme < ActiveRecord::Base
     Dark: {
       "primary" => "dddddd",
       "secondary" => "222222",
-      "tertiary" => "0f82af",
+      "tertiary" => "099dd7",
       "quaternary" => "c14924",
       "header_background" => "111111",
       "header_primary" => "dddddd",
@@ -256,7 +256,7 @@ class ColorScheme < ActiveRecord::Base
       "secondary" => "002B36",
       "tertiary_low" => "003E54",
       "tertiary_medium" => "00557A",
-      "tertiary" => "0088cc",
+      "tertiary" => "1a97d5",
       "tertiary_high" => "006C9F",
       "quaternary_low" => "944835",
       "quaternary" => "e45735",
@@ -409,13 +409,13 @@ class ColorScheme < ActiveRecord::Base
   def self.lookup_hex_for_name(name, scheme_id = nil)
     enabled_color_scheme = find_by(id: scheme_id) if scheme_id
     enabled_color_scheme ||= Theme.where(id: SiteSetting.default_theme_id).first&.color_scheme
-    (enabled_color_scheme || base).colors.find { |c| c.name == name }.try(:hex) || "nil"
+    (enabled_color_scheme || base).colors.find { |c| c.name == name }.try(:hex)
   end
 
   def self.hex_for_name(name, scheme_id = nil)
-    cache_key = scheme_id ? name + "_#{scheme_id}" : name
-    hex_cache[cache_key] ||= lookup_hex_for_name(name, scheme_id)
-    hex_cache[cache_key] == "nil" ? nil : hex_cache[cache_key]
+    hex_cache.defer_get_set(scheme_id ? name + "_#{scheme_id}" : name) do
+      lookup_hex_for_name(name, scheme_id)
+    end
   end
 
   def colors=(arr)

@@ -166,8 +166,6 @@ fa_IR:
     software_update_prompt:
       message: "سایت بروز رسانی شده٬ لطفا برای پرهیز از بروز خطای احتمالی صفحه خود را دوباره <span>بارگزاری/ریفرش</span> کنید."
       dismiss: "رد کردن"
-    bootstrap_mode_disabled: "حالت خود راه انداز در 24 ساعت آینده غیر‌فعال خواهد شد."
-    bootstrap_invite_button_title: "ارسال دعوت‌نامه"
     themes:
       default_description: "پیش‌فرض"
     s3:
@@ -318,7 +316,6 @@ fa_IR:
       new_topic: "پیش‌نویس‌ موضوع جدید"
       new_private_message: "پیش‌نویس پیام شخصی جدید"
       abandon:
-        confirm: "شما یک پیش‌نویس در این موضوع دارید. دوست داری باهاش چیکار کنی؟"
         yes_value: "حذف"
         no_value: "ادامه"
     topic_count_categories:
@@ -334,7 +331,7 @@ fa_IR:
       one: "خواندن %{count} موضوعات خوانده نشده"
       other: "خواندن %{count} موضوع خوانده نشده"
     topic_count_new:
-      one: "مشاهده %{count} موضوعات جدید"
+      one: "مشاهده %{count} موضوع جدید"
       other: "مشاهده %{count} موضوع جدید"
     preview: "پیش‌نمایش"
     cancel: "لغو"
@@ -1030,11 +1027,8 @@ fa_IR:
         enable: "فعال کردن نوار کناری"
         options: "تنظیمات"
         categories_section: "بخش دسته‌بندی‌ها"
-        categories_section_instruction: "دسته‌بندی‌های انتخاب شده در بخش دسته‌بندی نوار کناری نمایش داده می‌شود."
         tags_section: "بخش برچسب‌ها"
-        tags_section_instruction: "برچسب‌های انتخاب شده در بخش برچسب‌ها نوار کناری نمایش داده می‌شود."
         navigation_section: "ناوبری"
-        list_destination_instruction: "وقتی محتوای جدیدی در نوار کناری وجود دارد..."
         list_destination_default: "از پیوند پیش‌فرض استفاده کنید و یک نشان برای موارد جدید نشان دهید"
         list_destination_unread_new: "پیوند به خوانده نشده/جدید و نمایش تعداد موارد جدید"
       change: "تغییر"
@@ -1100,13 +1094,6 @@ fa_IR:
       theme: "قالب"
       home: "صفحه خانگی پیشفرض"
       staged: "کاربر از راه دور"
-      staff_counters:
-        flags_given: "پرچم گذاری‌های مفید"
-        flagged_posts: "نوشته های پرچم گذاری شده"
-        deleted_posts: "پست های حذف شده"
-        suspensions: "تعلیق‌ها"
-        warnings_received: "هشدارها"
-        rejected_posts: "پست های رد شده"
       messages:
         all: "تمام صندوق‌های ورودی"
         inbox: "صندوق دریافت"
@@ -1141,7 +1128,6 @@ fa_IR:
         tags: "برچسب‌‌ها"
         interface: "رابط"
         apps: "برنامه‌ها"
-        sidebar: "نوار کناری"
       change_password:
         success: "(ایمیل ارسال شد)"
         in_progress: "(فرستادن ایمیل)"
@@ -1154,8 +1140,6 @@ fa_IR:
       second_factor_backup:
         regenerate: "ایجاد مجدد"
         disable: "ازکاراندازی"
-        enable: "فعال کردن"
-        enable_long: "کدهای پشتیبان را به کار بگیر"
         copy_to_clipboard: "کپی در clipboard"
         copy_to_clipboard_error: "خطا در کپی اطلاعات"
         copied_to_clipboard: "کپی شد"
@@ -1637,7 +1621,6 @@ fa_IR:
       description:
         one: "<b>%{count}</b> پاسخ داده شده."
         other: "<b>%{count}</b> پاسخ داده شده."
-      enable: "خلاصه‌ی این موضوع"
       disable: "نمایش همه‌ی نوشته‌ها"
     deleted_filter:
       enabled_description: "این موضوع شامل نوشته‌های حذف شده‌ای است، که مخفی شده‌اند."
@@ -2045,6 +2028,7 @@ fa_IR:
       reaction_2: "<span>%{username}، %{username2}</span> %{description}"
       votes_released: "%{description} - تکمیل شد"
       new_features: "ویژگی‌های جدید در دسترس است!"
+      admin_problems: "توصیه‌های جدید در پیشخوان سایت شما"
       dismiss_confirmation:
         body:
           default:
@@ -3209,7 +3193,6 @@ fa_IR:
         one: "این مدال را %{count} بار به دست آورده"
         other: "این مدال را %{count} بار به دست آورده"
       granted_on: "اعطا شده %{date}"
-      others_count: "سایرین با این مدال (%{count})"
       title: نشان‌ها
       allow_title: "می‌توانید از این نشان برای عنوان کاربری استفاده کنید"
       multiple_grant: "می‌توانید این را چند بار به‌دست آورید"
@@ -3372,18 +3355,24 @@ fa_IR:
       more: "بیشتر"
       all_categories: "همه‌ی دسته‌بندی‌ها"
       all_tags: "همه برچسب‌ها"
+      categories_form_modal:
+        save: "ذخیره"
       sections:
         custom:
           add: "افزودن بخش سفارشی"
           edit: "ویرایش بخش سفارشی"
-          name: "عنوان بخش"
           save: "ذخیره"
           delete: "حذف"
           delete_confirm: "آیا مطمئن هستید که می‌خواهید این بخش را حذف کنید؟"
           links:
-            icon: "آیکن"
-            name: "نام"
             delete: "حذف پیوند"
+            reset: "بازگردانی به پیش‌فرض"
+            icon:
+              label: "آیکن"
+            name:
+              label: "نام"
+          title:
+            label: "عنوان بخش"
         about:
           header_link_text: "درباره"
         messages:
@@ -3411,7 +3400,7 @@ fa_IR:
           configure_defaults: "تنظیمات پیش‌فرض"
         community:
           header_link_text: "انجمن"
-          header_action_title: "ایجاد موضوع"
+          header_action_create_topic_title: "ایجاد موضوع"
           links:
             about:
               content: "درباره"
@@ -3421,8 +3410,8 @@ fa_IR:
               title: "تنظیمات و گزارش‌های سایت"
             badges:
               content: "نشان‌ها"
-            everything:
-              content: "همه چیز"
+            topics:
+              content: "موضوعات"
               title: "همه موضوعات"
             faq:
               content: "پرسش‌های متداول"
@@ -4147,9 +4136,6 @@ fa_IR:
           flag: "پرچم"
           replace: "جایگزینی"
           tag: "برچسب"
-        action_descriptions:
-          block: "از فرستادن فرسته‌هایی که دارای این واژه‌ها هستند جلوگیری کنید. کاربر هنگام ارسال فرسته با پیام خطا مواجه می‌شود."
-          require_approval: "فرسته‌های دارای این واژه‌ها پیش از دیده شدن نیاز به تائید کارکنان دارند."
         form:
           tag_label: "برچسب"
           link_placeholder: "https://example.com"
@@ -4188,6 +4174,8 @@ fa_IR:
               key: "حداقل"
             maximum:
               key: "حداکثر"
+            type:
+              key: "نوع"
       impersonate:
         title: "جعل هویت کردن"
         help: "با استفاده از ابزار جعل هویت کردن یک حساب کاربری را برای اشکال زدایی انتخاب نمایید، شما باید بعد از اتمام کار یک بار خارج شوید."
@@ -4434,6 +4422,9 @@ fa_IR:
             label: "افزودن شکلک"
         title: "تنظیمات"
         no_results: "چیزی یافت نشد."
+        more_site_setting_results:
+          one: "بیش از %{count} نتیجه وجود دارد. لطفا جستجوی خود را اصلاح کنید یا یک دسته‌بندی را انتخاب کنید."
+          other: "بیش از %{count} نتیجه وجود دارد. لطفا جستجوی خود را اصلاح کنید یا یک دسته‌بندی را انتخاب کنید."
         clear_filter: "واضح"
         add_url: "اضافه کردن URL"
         add_host: "اضافه کردن هاست"

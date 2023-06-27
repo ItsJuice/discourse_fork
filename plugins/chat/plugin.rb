@@ -17,7 +17,6 @@ register_asset "stylesheets/mobile/index.scss", :mobile
 
 register_svg_icon "comments"
 register_svg_icon "comment-slash"
-register_svg_icon "hashtag"
 register_svg_icon "lock"
 register_svg_icon "file-audio"
 register_svg_icon "file-video"
@@ -64,6 +63,7 @@ after_initialize do
     User.prepend Chat::UserExtension
     Jobs::UserEmail.prepend Chat::UserEmailExtension
     Plugin::Instance.prepend Chat::PluginInstanceExtension
+    Jobs::ExportCsvFile.class_eval { prepend Chat::MessagesExporter }
   end
 
   if Oneboxer.respond_to?(:register_local_handler)
@@ -182,31 +182,48 @@ after_initialize do
     scope.user.id != object.id && scope.can_chat? && Guardian.new(object).can_chat?
   end
 
-  add_to_serializer(:current_user, :can_chat) { true }
+  add_to_serializer(
+    :current_user,
+    :can_chat,
+    include_condition: -> do
+      return @can_chat if defined?(@can_chat)
+      @can_chat = SiteSetting.chat_enabled && scope.can_chat?
+    end,
+  ) { true }
 
-  add_to_serializer(:current_user, :include_can_chat?) do
-    return @can_chat if defined?(@can_chat)
+  add_to_serializer(
+    :current_user,
+    :has_chat_enabled,
+    include_condition: -> do
+      return @has_chat_enabled if defined?(@has_chat_enabled)
+      @has_chat_enabled = include_can_chat? && object.user_option.chat_enabled
+    end,
+  ) { true }
 
-    @can_chat = SiteSetting.chat_enabled && scope.can_chat?
-  end
+  add_to_serializer(
+    :current_user,
+    :chat_sound,
+    include_condition: -> { include_has_chat_enabled? && object.user_option.chat_sound },
+  ) { object.user_option.chat_sound }
 
-  add_to_serializer(:current_user, :has_chat_enabled) { true }
+  add_to_serializer(
+    :current_user,
+    :needs_channel_retention_reminder,
+    include_condition: -> do
+      include_has_chat_enabled? && object.staff? &&
+        !object.user_option.dismissed_channel_retention_reminder &&
+        !SiteSetting.chat_channel_retention_days.zero?
+    end,
+  ) { true }
 
-  add_to_serializer(:current_user, :include_has_chat_enabled?) do
-    return @has_chat_enabled if defined?(@has_chat_enabled)
-
-    @has_chat_enabled = include_can_chat? && object.user_option.chat_enabled
-  end
-
-  add_to_serializer(:current_user, :chat_sound) { object.user_option.chat_sound }
-
-  add_to_serializer(:current_user, :include_chat_sound?) do
-    include_has_chat_enabled? && object.user_option.chat_sound
-  end
-
-  add_to_serializer(:current_user, :needs_channel_retention_reminder) { true }
-
-  add_to_serializer(:current_user, :needs_dm_retention_reminder) { true }
+  add_to_serializer(
+    :current_user,
+    :needs_dm_retention_reminder,
+    include_condition: -> do
+      include_has_chat_enabled? && !object.user_option.dismissed_dm_retention_reminder &&
+        !SiteSetting.chat_dm_retention_days.zero?
+    end,
+  ) { true }
 
   add_to_serializer(:current_user, :has_joinable_public_channels) do
     Chat::ChannelFetcher.secured_public_channel_search(
@@ -222,18 +239,11 @@ after_initialize do
     Chat::ChannelIndexSerializer.new(structured, scope: self.scope, root: false).as_json
   end
 
-  add_to_serializer(:current_user, :include_needs_channel_retention_reminder?) do
-    include_has_chat_enabled? && object.staff? &&
-      !object.user_option.dismissed_channel_retention_reminder &&
-      !SiteSetting.chat_channel_retention_days.zero?
-  end
-
-  add_to_serializer(:current_user, :include_needs_dm_retention_reminder?) do
-    include_has_chat_enabled? && !object.user_option.dismissed_dm_retention_reminder &&
-      !SiteSetting.chat_dm_retention_days.zero?
-  end
-
-  add_to_serializer(:current_user, :chat_drafts) do
+  add_to_serializer(
+    :current_user,
+    :chat_drafts,
+    include_condition: -> { include_has_chat_enabled? },
+  ) do
     Chat::Draft
       .where(user_id: object.id)
       .order(updated_at: :desc)
@@ -242,13 +252,13 @@ after_initialize do
       .map { |row| { channel_id: row[0], data: row[1] } }
   end
 
-  add_to_serializer(:current_user, :include_chat_drafts?) { include_has_chat_enabled? }
-
   add_to_serializer(:user_option, :chat_enabled) { object.chat_enabled }
 
-  add_to_serializer(:user_option, :chat_sound) { object.chat_sound }
-
-  add_to_serializer(:user_option, :include_chat_sound?) { !object.chat_sound.blank? }
+  add_to_serializer(
+    :user_option,
+    :chat_sound,
+    include_condition: -> { !object.chat_sound.blank? },
+  ) { object.chat_sound }
 
   add_to_serializer(:user_option, :only_chat_push_notifications) do
     object.only_chat_push_notifications
@@ -287,11 +297,25 @@ after_initialize do
     if name == :secure_uploads && old_value == false && new_value == true
       Chat::SecureUploadsCompatibility.update_settings
     end
+
+    if name == :chat_allowed_groups
+      Jobs.enqueue(
+        Jobs::Chat::AutoRemoveMembershipHandleChatAllowedGroupsChange,
+        new_allowed_groups: new_value,
+      )
+    end
   end
 
   on(:post_alerter_after_save_post) do |post, new_record, notified|
     next if !new_record
     Chat::PostNotificationHandler.new(post, notified).handle
+  end
+
+  on(:group_destroyed) do |group, user_ids|
+    Jobs.enqueue(
+      Jobs::Chat::AutoRemoveMembershipHandleDestroyedGroup,
+      destroyed_group_user_ids: user_ids,
+    )
   end
 
   register_presence_channel_prefix("chat") do |channel_name|
@@ -370,14 +394,19 @@ after_initialize do
     end
   end
 
+  on(:user_removed_from_group) do |user, group|
+    Jobs.enqueue(Jobs::Chat::AutoRemoveMembershipHandleUserRemovedFromGroup, user_id: user.id)
+  end
+
   on(:category_updated) do |category|
     # TODO(roman): remove early return after 2.9 release.
     # There's a bug on core where this event is triggered with an `#update` result (true/false)
-    return if !category.is_a?(Category)
-    category_channel = Chat::Channel.find_by(auto_join_users: true, chatable: category)
+    if category.is_a?(Category) && category_channel = Chat::Channel.find_by(chatable: category)
+      if category_channel.auto_join_users
+        Chat::ChannelMembershipManager.new(category_channel).enforce_automatic_channel_memberships
+      end
 
-    if category_channel
-      Chat::ChannelMembershipManager.new(category_channel).enforce_automatic_channel_memberships
+      Jobs.enqueue(Jobs::Chat::AutoRemoveMembershipHandleCategoryUpdated, category_id: category.id)
     end
   end
 
@@ -467,6 +496,8 @@ after_initialize do
   )
 
   register_bookmarkable(Chat::MessageBookmarkable)
+
+  ActiveModel::Type.register(:array, Chat::Types::Array)
 end
 
 if Rails.env == "test"

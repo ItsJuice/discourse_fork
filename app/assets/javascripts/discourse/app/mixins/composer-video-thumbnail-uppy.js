@@ -17,98 +17,95 @@ export default Mixin.create(ExtendableUploader, UppyS3Multipart, {
   useUploadPlaceholders: true,
 
   @bind
-  _generateVideoThumbnail() {
-    if (!this.siteSettings.enable_diffhtml_preview) {
-      return;
+  _generateVideoThumbnail(videoFile, uploadUrl, callback) {
+    if (!this.siteSettings.video_thumbnails_enabled) {
+      return callback();
     }
-
-    let videos = document.getElementsByClassName("video-container");
-    if (!videos) {
-      return;
+    if (videoFile.type.split("/")[0] !== "video") {
+      return callback();
     }
+    let video = document.createElement("video");
+    video.src = URL.createObjectURL(videoFile.data);
 
-    // Only generate a topic thumbnail for the first video
-    let video_container = videos[0];
-    if (!video_container) {
-      return;
-    }
+    // These attributes are needed for thumbnail generation on mobile.
+    // This video tag is not visible, so this is all happening in the background.
+    video.autoplay = true;
+    video.muted = true;
+    video.playsinline = true;
 
-    let video = video_container.querySelector("video:first-of-type");
-    if (!video) {
-      return;
-    }
-
-    let video_src = video.getElementsByTagName("source")[0].src;
-    let video_sha1 = video_src
-      .substring(video_src.lastIndexOf("/") + 1)
+    let videoSha1 = uploadUrl
+      .substring(uploadUrl.lastIndexOf("/") + 1)
       .split(".")[0];
 
-    // Wait for the video element to load, otherwise the canvas will be empty
-    video.oncanplay = () => {
+    // Wait for the video element to load, otherwise the canvas will be empty.
+    // iOS Safari prefers onloadedmetadata over oncanplay.
+    video.onloadedmetadata = () => {
       let canvas = document.createElement("canvas");
       let ctx = canvas.getContext("2d");
-      let videoHeight, videoWidth;
-      videoHeight = video.videoHeight;
-      videoWidth = video.videoWidth;
-      canvas.width = videoWidth;
-      canvas.height = videoHeight;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
 
-      ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+      // A timeout is needed on mobile.
+      setTimeout(() => {
+        ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
-      // upload video thumbnail
-      canvas.toBlob((blob) => {
-        this._uppyInstance = new Uppy({
-          id: `screenshot-placeholder`,
-          meta: {
-            upload_type: `thumbnail`,
-            video_sha1,
-          },
-          autoProceed: true,
-        });
+        // upload video thumbnail
+        canvas.toBlob((blob) => {
+          this._uppyInstance = new Uppy({
+            id: "video-thumbnail",
+            meta: {
+              upload_type: `thumbnail`,
+              videoSha1,
+            },
+            autoProceed: true,
+          });
 
-        if (this.siteSettings.enable_upload_debug_mode) {
-          this._instrumentUploadTimings();
-        }
-
-        if (this.siteSettings.enable_direct_s3_uploads) {
-          this._useS3MultipartUploads();
-        } else {
-          this._useXHRUploads();
-        }
-        this._uppyInstance.use(DropTarget, { target: this.element });
-
-        this._uppyInstance.on("upload", () => {
-          this.set("uploading", true);
-        });
-
-        this._uppyInstance.on("upload-success", () => {
-          this.set("uploading", false);
-        });
-
-        this._uppyInstance.on("upload-error", (file, error, response) => {
-          let message = I18n.t("wizard.upload_error");
-          if (response.body.errors) {
-            message = response.body.errors.join("\n");
+          if (this.siteSettings.enable_upload_debug_mode) {
+            this._instrumentUploadTimings();
           }
 
-          // eslint-disable-next-line no-console
-          console.error(message);
-          this.set("uploading", false);
-        });
+          if (this.siteSettings.enable_direct_s3_uploads) {
+            this._useS3MultipartUploads();
+          } else {
+            this._useXHRUploads();
+          }
+          this._uppyInstance.use(DropTarget, { target: this.element });
 
-        try {
-          this._uppyInstance.addFile({
-            source: `${this.id} thumbnail`,
-            name: video_sha1,
-            type: blob.type,
-            data: blob,
+          this._uppyInstance.on("upload", () => {
+            this.set("uploading", true);
           });
-        } catch (err) {
-          warn(`error adding files to uppy: ${err}`, {
-            id: "discourse.upload.uppy-add-files-error",
+
+          this._uppyInstance.on("upload-success", () => {
+            this.set("uploading", false);
+            callback();
           });
-        }
-      });
+
+          this._uppyInstance.on("upload-error", (file, error, response) => {
+            let message = I18n.t("wizard.upload_error");
+            if (response.body.errors) {
+              message = response.body.errors.join("\n");
+            }
+
+            // eslint-disable-next-line no-console
+            console.error(message);
+            this.set("uploading", false);
+            callback();
+          });
+
+          try {
+            this._uppyInstance.addFile({
+              source: `${this.id} thumbnail`,
+              name: `${videoSha1}`,
+              type: blob.type,
+              data: blob,
+            });
+          } catch (err) {
+            warn(`error adding files to uppy: ${err}`, {
+              id: "discourse.upload.uppy-add-files-error",
+            });
+          }
+        });
+      }, 100);
     };
   },
 

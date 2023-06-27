@@ -154,6 +154,7 @@ da:
         italic_text: "kursiv skrift"
         bold_text: "fed skrift"
         code_text: "kode tekst"
+        send: "Send"
       quote:
         copy_success: "Chat-citat kopieret til udklipsholderen"
       notification_levels:
@@ -199,6 +200,18 @@ da:
         activities: "Aktiviteter"
         flags: "Flag"
         symbols: "Symboler"
+      thread:
+        title: "Titel"
+        replies:
+          one: "%{count} svar"
+          other: "%{count} svar"
+        settings: "Indstillinger"
+        last_reply: "seneste svar"
+        notifications:
+          regular:
+            title: "Normal"
+          tracking:
+            title: "Følger"
       draft_channel_screen:
         header: "Ny Besked"
         cancel: "Annuller"
@@ -234,10 +247,6 @@ da:
             sender:
               label: Afsender
               description: Standard er system
-    review:
-      types:
-        reviewable_chat_message:
-          flagged_by: "Markeret af"
     keyboard_shortcuts_help:
       chat:
         title: "Chat"

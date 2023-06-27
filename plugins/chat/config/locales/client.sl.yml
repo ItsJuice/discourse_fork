@@ -103,6 +103,20 @@ sl:
         activities: "Dejavnosti"
         flags: "Zastave"
         symbols: "Simboli"
+      thread:
+        title: "Naziv"
+        replies:
+          one: "%{count} odgovor"
+          two: "%{count} odgovora"
+          few: "%{count} odgovori"
+          other: "%{count} odgovorov"
+        settings: "Nastavitve"
+        last_reply: "zadnji odgovor"
+        notifications:
+          regular:
+            title: "Običajna"
+          tracking:
+            title: "Sledim"
       draft_channel_screen:
         header: "Novo zasebno sporočilo"
         cancel: "Prekliči"
@@ -114,7 +128,3 @@ sl:
           fields:
             message:
               label: Opozorilo
-    review:
-      types:
-        reviewable_chat_message:
-          flagged_by: "Prijavljen od"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Create channel", type: :system, js: true do
+RSpec.describe "Create channel", type: :system do
   fab!(:category_1) { Fabricate(:category) }
 
   let(:chat_page) { PageObjects::Pages::Chat.new }
@@ -10,11 +10,12 @@ RSpec.describe "Create channel", type: :system, js: true do
 
   context "when user cannot create channel" do
     fab!(:current_user) { Fabricate(:user) }
+
     before { sign_in(current_user) }
 
     it "does not show the create channel button" do
       chat_page.visit_browse
-      expect(chat_page).not_to have_new_channel_button
+      expect(chat_page).to have_no_new_channel_button
     end
   end
 

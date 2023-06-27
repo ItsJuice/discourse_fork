@@ -202,11 +202,13 @@ module PrettyText
         __optInput.customEmoji = #{custom_emoji.to_json};
         __optInput.customEmojiTranslation = #{Plugin::CustomEmoji.translations.to_json};
         __optInput.emojiUnicodeReplacer = __emojiUnicodeReplacer;
+        __optInput.emojiDenyList = #{Emoji.denied.to_json};
         __optInput.lookupUploadUrls = __lookupUploadUrls;
-        __optInput.censoredRegexp = #{WordWatcher.serializable_word_matcher_regexp(:censor).to_json};
-        __optInput.watchedWordsReplace = #{WordWatcher.word_matcher_regexps(:replace).to_json};
-        __optInput.watchedWordsLink = #{WordWatcher.word_matcher_regexps(:link).to_json};
+        __optInput.censoredRegexp = #{WordWatcher.serializable_word_matcher_regexp(:censor, engine: :js).to_json};
+        __optInput.watchedWordsReplace = #{WordWatcher.word_matcher_regexps(:replace, engine: :js).to_json};
+        __optInput.watchedWordsLink = #{WordWatcher.word_matcher_regexps(:link, engine: :js).to_json};
         __optInput.additionalOptions = #{Site.markdown_additional_options.to_json};
+        __optInput.avatar_sizes = #{SiteSetting.avatar_sizes.to_json};
       JS
 
       buffer << "__optInput.topicId = #{opts[:topic_id].to_i};\n" if opts[:topic_id]
@@ -215,16 +217,7 @@ module PrettyText
         buffer << "__optInput.forceQuoteLink = #{opts[:force_quote_link]};\n"
       end
 
-      if opts[:user_id]
-        buffer << "__optInput.userId = #{opts[:user_id].to_i};\n"
-
-        # NOTE: If using this for server-side cooking you will end up
-        # with a Hash once it is passed to a PrettyText::Helper. If
-        # you use that hash to instanciate a User model, you will want to do
-        # user.reload before accessing data on this parsed User, otherwise
-        # AR relations will not be loaded.
-        buffer << "__optInput.currentUser = #{User.find(opts[:user_id]).to_json}\n"
-      end
+      buffer << "__optInput.userId = #{opts[:user_id].to_i};\n" if opts[:user_id]
 
       opts[:hashtag_context] = opts[:hashtag_context] || "topic-composer"
       hashtag_types_as_js =
@@ -232,10 +225,8 @@ module PrettyText
           .ordered_types_for_context(opts[:hashtag_context])
           .map { |t| "'#{t}'" }
           .join(",")
-      hashtag_icons_as_js =
-        HashtagAutocompleteService.data_source_icons.map { |i| "'#{i}'" }.join(",")
       buffer << "__optInput.hashtagTypesInPriorityOrder = [#{hashtag_types_as_js}];\n"
-      buffer << "__optInput.hashtagIcons = [#{hashtag_icons_as_js}];\n"
+      buffer << "__optInput.hashtagIcons = #{HashtagAutocompleteService.data_source_icon_map.to_json};\n"
 
       buffer << "__textOptions = __buildOptions(__optInput);\n"
       buffer << ("__pt = new __PrettyText(__textOptions);")
@@ -266,6 +257,8 @@ module PrettyText
   # leaving this here, cause it invokes v8, don't want to implement twice
   def self.avatar_img(avatar_template, size)
     protect { v8.eval(<<~JS) }
+        __optInput = {};
+        __optInput.avatar_sizes = #{SiteSetting.avatar_sizes.to_json};
         __paths = #{paths_json};
         __utils.avatarImg({size: #{size.inspect}, avatarTemplate: #{avatar_template.inspect}}, __getURL);
       JS
@@ -319,7 +312,7 @@ module PrettyText
     add_mentions(doc, user_id: opts[:user_id]) if SiteSetting.enable_mentions
 
     scrubber = Loofah::Scrubber.new { |node| node.remove if node.name == "script" }
-    loofah_fragment = Loofah.fragment(doc.to_html)
+    loofah_fragment = Loofah.html5_fragment(doc.to_html)
     loofah_fragment.scrub!(scrubber).to_html
   end
 
@@ -433,13 +426,19 @@ module PrettyText
 
     # extract Youtube links
     doc
-      .css("div[data-youtube-id]")
+      .css("div[data-video-id]")
       .each do |div|
-        if div["data-youtube-id"].present?
-          links << DetectedLink.new(
-            "https://www.youtube.com/watch?v=#{div["data-youtube-id"]}",
-            false,
-          )
+        if div["data-video-id"].present? && div["data-provider-name"].present?
+          base_url =
+            case div["data-provider-name"]
+            when "youtube"
+              "https://www.youtube.com/watch?v="
+            when "vimeo"
+              "https://vimeo.com/"
+            when "tiktok"
+              "https://m.tiktok.com/v/"
+            end
+          links << DetectedLink.new(base_url + div["data-video-id"], false)
         end
       end
 
@@ -457,6 +456,9 @@ module PrettyText
             name
           end
         end
+
+    mentions =
+      DiscoursePluginRegistry.apply_modifier(:pretty_text_extract_mentions, mentions, cooked)
 
     mentions.compact!
     mentions.uniq!

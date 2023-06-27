@@ -25,6 +25,10 @@
 
   <SoftwareUpdatePrompt />
 
+  {{#if this.siteSettings.enable_offline_indicator}}
+    <OfflineIndicator />
+  {{/if}}
+
   <PluginOutlet
     @name="below-site-header"
     @connectorTagName="div"
@@ -40,6 +44,8 @@
       {{/if}}
     </div>
 
+    <PluginOutlet @name="before-main-outlet" />
+
     <div id="main-outlet">
       <PluginOutlet @name="above-main-container" @connectorTagName="div" />
       <div class="container" id="main-container">
@@ -48,11 +54,7 @@
         {{/if}}
         <NotificationConsentBanner />
         <PwaInstallBanner />
-        {{#if this.showBootstrapModeNotice}}
-          <BootstrapModeNotice />
-        {{/if}}
         <GlobalNotice />
-        <CreateTopicsNotice />
         <PluginOutlet
           @name="top-notices"
           @connectorTagName="div"
@@ -61,8 +63,16 @@
       </div>
 
       {{outlet}}
-      {{outlet "user-card"}}
+
+      <CardContainer />
+      <PluginOutlet
+        @name="main-outlet-bottom"
+        @outletArgs={{hash showFooter=this.showFooter}}
+      />
     </div>
+
+    <PluginOutlet @name="after-main-outlet" />
+
   </div>
 
   <PluginOutlet
@@ -83,10 +93,10 @@
     @outletArgs={{hash showFooter=this.showFooter}}
   />
 
-  {{outlet "modal"}}
+  <ModalContainer />
   <DialogHolder />
   <TopicEntrance />
-  {{outlet "composer"}}
+  <ComposerContainer />
 
   {{#if this.showFooterNav}}
     <FooterNav />

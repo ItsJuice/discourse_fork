@@ -7,6 +7,8 @@ RSpec.describe Post do
 
   before { Oneboxer.stubs :onebox }
 
+  it_behaves_like "it has custom fields"
+
   it { is_expected.to have_many(:reviewables).dependent(:destroy) }
 
   describe "#hidden_reasons" do
@@ -1532,8 +1534,6 @@ RSpec.describe Post do
   end
 
   describe "video_thumbnails" do
-    before { SiteSetting.enable_diffhtml_preview = true }
-
     fab!(:video_upload) { Fabricate(:upload, extension: "mp4") }
     fab!(:image_upload) { Fabricate(:upload) }
     fab!(:image_upload_2) { Fabricate(:upload) }
@@ -1549,6 +1549,8 @@ RSpec.describe Post do
 
     let(:post) { Fabricate(:post, raw: raw_video) }
 
+    before { SiteSetting.video_thumbnails_enabled = true }
+
     it "has a topic thumbnail" do
       # Thumbnails are tied to a specific video file by using the
       # video's sha1 as the image filename
@@ -1562,6 +1564,39 @@ RSpec.describe Post do
 
     it "only applies for video uploads" do
       image_upload.original_filename = "#{image_upload_2.sha1}.png"
+      image_upload.save!
+      post.link_post_uploads
+
+      post.topic.reload
+      expect(post.topic.topic_thumbnails.length).to eq(0)
+    end
+
+    it "does not overwrite existing thumbnails" do
+      image_upload.original_filename = "#{video_upload.sha1}.png"
+      image_upload.save!
+      post.topic.image_upload_id = image_upload_2.id
+      post.topic.save!
+      post.link_post_uploads
+
+      post.topic.reload
+      expect(post.topic.image_upload_id).to eq(image_upload_2.id)
+    end
+
+    it "uses the newest thumbnail" do
+      image_upload.original_filename = "#{video_upload.sha1}.png"
+      image_upload.save!
+      image_upload_2.original_filename = "#{video_upload.sha1}.png"
+      image_upload_2.save!
+      post.link_post_uploads
+
+      post.topic.reload
+      expect(post.topic.topic_thumbnails.length).to eq(1)
+      expect(post.topic.image_upload_id).to eq(image_upload_2.id)
+    end
+
+    it "does not create thumbnails when disabled" do
+      SiteSetting.video_thumbnails_enabled = false
+      image_upload.original_filename = "#{video_upload.sha1}.png"
       image_upload.save!
       post.link_post_uploads
 

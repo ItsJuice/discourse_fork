@@ -187,12 +187,6 @@ ro:
     software_update_prompt:
       message: "Site-ul a fost actualizat! <span>Reîmprospătează pagina</span>."
       dismiss: "Renunță"
-    bootstrap_mode_enabled:
-      one: "Pentru a simplifica lansarea noului site, sunteți în modul bootstrap. Toți utilizatorii noi vor primi nivelul 1 de încredere și vor avea activată primirea zilnică de e-mail-uri rezumat. Această funcționalitate va fi oprită automat după ce se înregistrează primii %{count} membri."
-      few: "Pentru a simplifica lansarea noului dv. site, sunteți în modul bootstrap. Toți utilizatorii noi vor primi nivelul 1 de încredere și vor avea activată primirea zilnică de e-mail-uri rezumat. Această funcționalitate va fi oprită automat după ce se înregistrează primii %{count} membri."
-      other: "Pentru a simplifica lansarea noului dv. site, sunteți în modul bootstrap. Toți utilizatorii noi vor primi nivelul 1 de încredere și vor avea activată primirea zilnică de e-mail-uri rezumat. Această funcționalitate va fi oprită automat după ce se înregistrează primii %{count} membri."
-    bootstrap_mode_disabled: "Modul bootstrap va fi dezactivat în următoarele 24 de ore"
-    bootstrap_invite_button_title: "Trimite invitații"
     themes:
       default_description: "Implicit"
     s3:
@@ -340,7 +334,6 @@ ro:
       remove_confirmation: "Ești sigur că vrei să ștergi această ciornă?"
       new_topic: "Ciornă subiect nou"
       abandon:
-        confirm: "Ai o schiță în curs pentru acest subiect. Ce ai vrea să faci mai departe?"
         yes_value: "Renunță"
         no_value: "Reia editarea"
     topic_count_categories:
@@ -1059,13 +1052,6 @@ ro:
       save_to_change_theme: 'Tema va fi actualizată după ce faceți clic pe „%{save_text}”'
       home: "Pagina inițială implicită"
       staged: "Pus în scenă"
-      staff_counters:
-        flags_given: "Marcaje ajutătoare"
-        flagged_posts: "Postări marcate"
-        deleted_posts: "Postări șterse"
-        suspensions: "Suspendări"
-        warnings_received: "Avertizări"
-        rejected_posts: "postări respinse"
       messages:
         inbox: "Primite"
         latest: "Cele mai recente"
@@ -1110,7 +1096,6 @@ ro:
       second_factor_backup:
         regenerate: "Regenerare"
         disable: "Dezactivează"
-        enable: "Activează"
         copy_to_clipboard: "Copiază în clipboard"
         copy_to_clipboard_error: "Eroare la copierea datelor în clipboard"
         copied_to_clipboard: "Copiat în clipboard"
@@ -1486,7 +1471,6 @@ ro:
       intro: "Salut! Se pare că îți place discuția, dar încă nu te-ai înscris pentru un cont."
     summary:
       enabled_description: "Vizualizezi un rezumat al acestui subiect: cea mai interesantă postare, așa cum a fost desemnată de comunitate. "
-      enable: "Fă rezumatul acestui subiect"
       disable: "Arată toate postările"
     deleted_filter:
       enabled_description: "Acest subiect conține postări șterse, care au fost ascunse. "
@@ -1956,7 +1940,7 @@ ro:
         top: "Nu exită niciun subiect de top."
         educate:
           new: '<p>Subiectele noi vor apărea aici.Implicit, subiectele vor fi considerate noi și vor afișa un indicator <span class="badge new-topic badge-notification" style="vertical-align:middle;line-height:inherit;"></span> dacă au fost create în ultimele 2 zile.</p><p>Mergi la <a href="%{userPrefsUrl}">preferințe</a> pentru a schimba această setare.</p>'
-          unread: '<p>Subiectele necitite vor apărea aici</p><p>Implicit, subiectele sunt considerate necitite și se va afișa numărul celor necitite <span class="badge unread-posts badge-notification">1</span>dacă ai:</p><ul><li>Creat subiectul</li><li>Răspuns la subiect</li><li>Citit subiectul de mai mult de 4 minute</li></ul><p>Sau dacă ai setat în mod explicit subiectul pe Urmărire sau Urmărire activă prin intermediul contorului de notificare de la sfârșitul fiecărui subiect.</p><p>Mergi la <a href="%{userPrefsUrl}">preferințe</a> pentru a schimba această setare.</p>'
+          unread: '<p>Subiectele necitite vor apărea aici</p><p>Implicit, subiectele sunt considerate necitite și se va afișa numărul celor necitite <span class="badge unread-posts badge-notification">1</span>dacă ai:</p><ul><li>Creat subiectul</li><li>Răspuns la subiect</li><li>Citit subiectul de mai mult de 5 minute</li></ul><p>Sau dacă ai setat în mod explicit subiectul pe Urmărire sau Urmărire activă prin intermediul contorului de notificare de la sfârșitul fiecărui subiect.</p><p>Mergi la <a href="%{userPrefsUrl}">preferințe</a> pentru a schimba această setare.</p>'
       bottom:
         latest: "Nu mai există niciun subiect recent."
         posted: "Nu mai există subiecte postate."
@@ -2800,7 +2784,6 @@ ro:
         few: "A primit acest ecuson de %{count} ori"
         other: "A primit acest ecuson de %{count} de ori"
       granted_on: "Acordat %{date}"
-      others_count: "Alții cu acest ecuson (%{count})"
       title: Ecusoane
       multiple_grant: "Poți primi asta de mai multe ori"
       badge_count:
@@ -2936,13 +2919,18 @@ ro:
         other: "%{count} nou"
       more: "Mai multe"
       all_categories: "Toate categoriile"
+      categories_form_modal:
+        save: "Salvare"
       sections:
         custom:
           save: "Salvare"
           delete: "Șterge"
           links:
-            icon: "Pictogramă"
-            name: "Nume"
+            reset: "Resetare la valorile implicite"
+            icon:
+              label: "Pictogramă"
+            name:
+              label: "Nume"
         about:
           header_link_text: "Despre"
         messages:
@@ -2968,8 +2956,8 @@ ro:
               content: "Administrator"
             badges:
               content: "Ecusoane"
-            everything:
-              content: "Totul"
+            topics:
+              content: "Discuții"
             faq:
               content: "Întrebări frecvente"
             groups:
@@ -3587,6 +3575,8 @@ ro:
               key: "minim"
             maximum:
               key: "maxim"
+            type:
+              key: "tip"
       impersonate:
         title: "Joacă rolul utilizatorului"
         help: "Folosește această unealtă pentru a imita un cont de utilizator pentru depanare. Va trebui să te deconectezi după ce termini."

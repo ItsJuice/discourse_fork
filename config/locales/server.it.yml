@@ -52,6 +52,8 @@ it:
   remove_posts_deleted_by_author: "Cancellato dall'autore"
   redirect_warning: "Non è stato possibile verificare che il collegamento che hai selezionato sia stato effettivamente pubblicato sul forum. Se desideri procedere comunque, seleziona il collegamento qui sotto."
   on_another_topic: "Su un altro argomento"
+  topic_tag_changed:
+    removed: "Ha rimosso %{removed}"
   inline_oneboxer:
     topic_page_title_post_number: "#%{post_number}"
     topic_page_title_post_number_by_user: "n°%{post_number} da %{username}"
@@ -189,9 +191,6 @@ it:
       load_from_remote: "Si è verificato un errore nel caricamento del messaggio."
     site_settings:
       invalid_category_id: "Hai specificato una categoria che non esiste"
-      invalid_choice:
-        one: "Hai specificato la scelta non valida %{name}"
-        other: "Hai specificato le scelte non valide %{name}"
       default_categories_already_selected: "Non puoi selezionare una categoria usata in un'altra lista."
       default_tags_already_selected: "Non è possibile selezionare un'etichetta utilizzata in un altro elenco."
       s3_upload_bucket_is_required: "Non è possibile attivare i caricamenti su S3 a meno che non imposti l'opzione 's3_upload_bucket'."
@@ -199,7 +198,6 @@ it:
       page_publishing_requirements: "La pubblicazione di pagine non può essere attivata se sono attivati i supporti sicuri."
       s3_backup_requires_s3_settings: "Non è possibile utilizzare S3 per i backup a meno che non sia stato fornito '%{setting_name}'."
       s3_bucket_reused: "Non puoi usare lo stesso bucket per 's3_upload_bucket' e 's3_backup_bucket'. Scegli un bucket differente, o un percorso diverso per ciascun bucket."
-      secure_uploads_requirements: "I caricamenti S3 devono essere abilitati prima di abilitare i caricamenti sicuri."
       share_quote_facebook_requirements: "Devi impostare un ID app Facebook per attivare la condivisione delle citazioni per Facebook."
       second_factor_cannot_enforce_with_socials: "Non si può applicare l'autenticazione a due fattori se l'acceso tramite social è attivo. Devi prima disattivarlo tramite %{auth_provider_names}"
       second_factor_cannot_be_enforced_with_disabled_local_login: "Non è possibile applicare l'autenticazione a due fattori se gli accessi locali sono disabilitati."
@@ -606,22 +604,6 @@ it:
   meta_category_description: "Discussioni su questo sito, la sua organizzazione, su come funziona e come possiamo migliorarlo."
   staff_category_name: "Staff"
   staff_category_description: "Categoria privata per discussioni dello staff. Gli argomenti sono visibili solo agli amministratori e ai moderatori."
-  discourse_welcome_topic:
-    title: "Ti diamo il benvenuto nella nostra community!"
-    body: |2
-
-      Il primo paragrafo di questo argomento appuntato sarà visibile come messaggio di benvenuto a tutti i nuovi visitatori sulla tua homepage. È importante!
-
-      **Modificalo** con una breve descrizione della tua comunità:
-
-      - A chi è rivolto?
-      - Cosa possono trovare qui?
-      - Perché dovrebbero venire qui?
-      - Dove possono saperne di più (collegamenti, risorse, ecc)?
-
-      <img src="%{base_path}/images/welcome/discourse-edit-post-animated.gif" width="508" height="106">
-
-      Potresti chiudere questo argomento tramite la :wrench: per amministratori (in alto a destra e in basso), in modo che le risposte non si accumulino sull'annuncio.
   admin_quick_start_title: "DA LEGGERE SUBITO: Guida Rapida per Amministratore"
   category:
     topic_prefix: "Definizione della categoria %{category}"
@@ -1104,7 +1086,7 @@ it:
       title: "DAU/MAU"
       xaxis: "Giorno"
       yaxis: "DAU/MAU"
-      description: "Numero di utenti che hanno effettuato l'accesso nell'ultimo giorno diviso per il numero di utenti che hanno effettuato l'accesso nell'ultimo mese: restituisce una % che rappresenta 'l'attaccamento' alla comunità. Obiettivo > 30%."
+      description: "Numero di utenti che hanno effettuato l'accesso nell'ultimo giorno diviso per il numero di utenti che hanno effettuato l'accesso nell'ultimo mese: restituisce una % che rappresenta 'l'attaccamento' alla comunità. Obiettivo > 20%."
     daily_engaged_users:
       title: "Utenti Impegnati Giornalmente"
       xaxis: "Giorno"
@@ -1472,7 +1454,6 @@ it:
     manifest_icon: "Immagine utilizzata come immagine logo / splash su Android. Verrà automaticamente ridimensionato a 512 × 512. Se lasciato vuoto, verrà utilizzato large_icon."
     manifest_screenshots: "Schermate che mostrano le caratteristiche e le funzionalità nella pagina di installazione. Tutte le immagini devono essere caricate in locale e delle stesse dimensioni."
     favicon: "Una favicon per il tuo sito, vedi <a href='https://en.wikipedia.org/wiki/Favicon' target='_blank'>https://en.wikipedia.org/wiki/Favicon</a> . Per funzionare correttamente su un CDN deve essere un'immagine PNG. Verrà ridimensionata a 32x32. Se lasciato vuoto, verrà usato large_icon."
-    apple_touch_icon: "Icona utilizzata per i dispositivi touch Apple. Verrà automaticamente ridimensionato a 180x180. Se lasciato vuoto, verrà usato large_icon."
     opengraph_image: "Immagine opengraph predefinita, utilizzata quando la pagina non ha altre immagini adatte. Se lasciato vuoto, verrà usato large_icon"
     twitter_summary_large_image: "Opzione 'Summary large image' di una scheda Twitter (deve misurare almeno 280 di larghezza e almeno 150 di altezza e non può essere un'imagine .svg). Se lasciato vuoto, i normali metadati delle schede vengono generati utilizzando l'opzione opengraph_image, a meno che l'immagine non sia un file .svg."
     notification_email: "L'indirizzo presente nel campo from: usato per inviare tutte le email essenziali di sistema. Il dominio indicato deve avere i record SPF, DKIM e reverse PTR impostati correttamente perché l'email arrivi."
@@ -1616,7 +1597,6 @@ it:
     discourse_connect_overrides_profile_background: "Sostituisce lo sfondo del profilo utente con il valore dal payload DiscourseConnect."
     discourse_connect_overrides_card_background: "Sostituisce lo sfondo della scheda utente con il valore dal payload DiscourseConnect."
     discourse_connect_not_approved_url: "Reindirizza gli account DiscourseConnect non approvati a questo URL"
-    discourse_connect_allows_all_return_paths: "Non restringere il dominio per i return_paths forniti da DiscourseConnect (per impostazione predefinita il percorso di ritorno deve essere sul sito corrente)"
     enable_local_logins: "Abilita gli account di accesso basati su nome utente e password locali. ATTENZIONE: se questa impostazione è disabilitata, potrebbe essere impossibile accedere senza aver precedentemente configurato almeno un metodo di accesso alternativo."
     enable_local_logins_via_email: "Consenti agli utenti di richiedere un collegamento di accesso usa e getta, che gli verrà inviato tramite email."
     allow_new_registrations: "Abilita la registrazione di nuovi utenti. Se l'opzione è deselezionata, non sarà possibile creare nuovi account."
@@ -1720,7 +1700,6 @@ it:
     composer_media_optimization_image_bytes_optimization_threshold: "Dimensione minima del file di immagini per attivare l'ottimizzazione lato client"
     composer_media_optimization_image_resize_dimensions_threshold: "Larghezza minima dell'immagine per attivare il ridimensionamento lato client"
     composer_media_optimization_image_resize_width_target: "Le immagini con larghezza maggiore di `composer_media_optimization_image_dimensions_resize_threshold` saranno ridimensionate a questa larghezza. il valore deve essere >= di `composer_media_optimization_image_dimensions_resize_threshold`."
-    composer_media_optimization_image_encode_quality: "Qualità di codifica JPEG utilizzata nel processo di ricodifica."
     min_ratio_to_crop: "Rapporto usato per ritagliare immagini alte. Immettere il risultato del rapporto larghezza / altezza."
     simultaneous_uploads: "Numero massimo di file che possono essere trascinati e rilasciati nel composer"
     default_invitee_trust_level: "Livello di attendibilità predefinito (0-4) assegnato agli utenti invitati."
@@ -1892,7 +1871,6 @@ it:
     pop3_polling_password: "La password dell'account POP3 per la ricezione di email."
     pop3_polling_delete_from_server: "Elimina email dal server. NOTA: se disabiliti questa opzione, devi pulire manualmente la tua casella di posta"
     log_mail_processing_failures: "Registra tutti gli errori di elaborazione della posta elettronica in <a href='%{base_path}/logs' target='_blank'>/logs</a>"
-    email_in: 'Permetti agli utenti di pubblicare nuovi argomenti via email (richiede il polling manuale o pop3). Configura gli indirizzi nella scheda "Impostazioni" di ciascuna categoria. '
     email_in_min_trust: "Livello di attendibilità minimo necessario affinché un utente possa pubblicare nuovi argomenti via email."
     email_in_authserv_id: "L'identificatore del servizio che esegue i controlli di autenticazione sulle e-mail in arrivo. Consulta <a href='https://meta.discourse.org/t/134358'>https://meta.discourse.org/t/134358</a> per istruzioni su come configurare questa opzione."
     email_in_spam_header: "L'intestazione dell'email per segnalare contenuti spam."
@@ -1978,7 +1956,6 @@ it:
     auto_handle_queued_age: "Gestisci automaticamente i record che sono in attesa di essere rivisti dopo tale numero di giorni. Le segnalazioni saranno ignorate. I messaggi in attesa e gli utenti saranno rifiutati. Impostare su 0 per disattivare questa funzionalità."
     penalty_step_hours: "Penalità predefinite per silenziare o sospendere gli utenti definite in ore. La prima infrazione porta una penalità pari al primo valore, la seconda infrazione porta una penalità pari al secondo valore, ecc."
     svg_icon_subset: "Aggiungi ulteriori icone FontAwesome 5 che desideri includere nelle tue risorse. Usa il prefisso 'fa-' per le icone solide, 'far-' per le icone regolari e 'fab-' per le icone di marchi."
-    max_prints_per_hour_per_user: "Numero massimo di pagine da stampare (imposta a 0 per disattivare)"
     full_name_required: "Il nome completo è un campo obbligatorio del profilo utente."
     enable_names: "Mostra il nome completo dell'utente su profilo, scheda utente e email. Disabilita per nascondere il nome completo ovunque."
     display_name_on_posts: "Mostra il nome completo dell'utente sui messaggi oltre allo @username."
@@ -1999,11 +1976,8 @@ it:
     allowed_href_schemes: "Schemi consentiti nei collegamenti in aggiunta a http e https."
     embed_post_limit: "Numero massimo di messaggi da incorporare."
     embed_username_required: "Il nome utente è obbligatorio per la creazione di argomenti."
-    notify_about_flags_after: "Se ci sono segnalazioni che non sono state gestite dopo tale numero di ore, invia un messaggio personale ai moderatori. Impostare su 0 per disabilitare."
-    show_create_topics_notice: "Se il sito ha meno di 5 argomenti pubblici, mostra un avviso chiedendo agli amministratori di creare qualche argomento."
     delete_drafts_older_than_n_days: "Elimina bozze più vecchie di (n) giorni."
     delete_merged_stub_topics_after_days: "Numero di giorni di attesa prima di eliminare automaticamente gli argomenti stub completamente uniti. Impostare a 0 per non eliminare mai gli argomenti stub."
-    bootstrap_mode_min_users: "Numero minimo di utenti richiesto per disabilitare la modalità bootstrap (imposta a 0 per disattivare)"
     prevent_anons_from_downloading_files: "Impedisci agli utenti anonimi di scaricare allegati."
     secure_uploads: 'Limita l''accesso a TUTTI i caricamenti (immagini, video, audio, testo, pdf, zip, ecc.). Se l''opzione “accesso richiesto” è attivata, solo gli utenti registrati possono accedere ai caricamenti. In caso contrario, l''accesso sarà limitato solo per i media caricati in messaggi privati e categorie private. ATTENZIONE: Questa impostazione è complessa e richiede una profonda competenza amministrativa. Per maggiori dettagli visita <a target="_blank" href="https://meta.discourse.org/t/-/140017">l''argomento sui caricamenti sicuri su Meta</a>.'
     secure_uploads_allow_embed_images_in_emails: "Consente l'integrazione di immagini sicure che normalmente verrebbero oscurate nelle e-mail, se la loro dimensione è inferiore al valore dell'i'impostazione 'dimensione max in kb immagini da integrare nelle email per caricamenti protetti'."
@@ -2073,7 +2047,6 @@ it:
     revoke_api_keys_days: "Numero di giorni prima che una chiave API non utilizzata sia revocata automaticamente (0 per non avere mai revoca)"
     allow_user_api_keys: "Consenti la generazione di chiavi API utente"
     allow_user_api_key_scopes: "Elenco di ambiti consentiti per le chiavi API utente"
-    min_trust_level_for_user_api_key: "Livello di attendibilità richiesto per la generazione di chiavi API utente"
     allowed_user_api_auth_redirects: "URL consentito per il reindirizzamento dell'autenticazione per le chiavi API utente. Il simbolo jolly * può essere utilizzato per abbinare qualsiasi parte di esso (ad esempio www.example.com/*)."
     allowed_user_api_push_urls: "URL consentiti per il push del server alle API utente"
     expire_user_api_keys_days: "Numero di giorni prima che una chiave API utente scada automaticamente (0 per non avere scadenza)"
@@ -2105,7 +2078,6 @@ it:
     enable_sitemap: "Genera una mappa per il tuo sito e includila nel file robots.txt."
     sitemap_page_size: "Numero di URL da includere in ciascuna pagina della mappa del sito. Massimo 50.000"
     enable_user_status: "(sperimentale) Consenti agli utenti di impostare un messaggio di stato personalizzato (emoji + descrizione)."
-    enable_user_tips: "(sperimentale) Abilita i nuovi suggerimenti che descrivono le funzionalità chiave per gli utenti"
     short_title: "Il titolo breve verrà utilizzato nella schermata iniziale dell'utente, nel programma di avvio o in altri contesti in cui lo spazio potrebbe essere limitato. Dovrebbe essere limitato a 12 caratteri."
     dashboard_hidden_reports: "Consenti di nascondere i report specificati dal dashboard."
     dashboard_visible_tabs: "Scegli quali schede del dashboard sono visibili."
@@ -2122,9 +2094,8 @@ it:
     suggest_weekends_in_date_pickers: "Includi i fine settimana (sabato e domenica) nei suggerimenti del selettore di date (disabilita questa opzione se usi Discourse solo nei giorni feriali, dal lunedì al venerdì)."
     splash_screen: "Visualizza una schermata di caricamento temporanea durante il caricamento delle risorse del sito"
     navigation_menu: "Determina quale menu di navigazione utilizzare. La barra laterale e la navigazione dell'intestazione sono personalizzabili dagli utenti. L'opzione Compatibile è disponibile per la compatibilità con le versioni precedenti."
-    default_sidebar_categories: "Le categorie selezionate appariranno, per impostazione predefinita, nella sezione Categorie della barra laterale."
-    default_sidebar_tags: "Le etichette selezionate appariranno, per impostazione predefinita, nella sezione Etichette della barra laterale."
     enable_experimental_hashtag_autocomplete: "SPERIMENTALE: utilizza il nuovo sistema di completamento automatico degli #hashtag per categorie ed etichette che rende l'elemento selezionato in modo diverso e con ricerca migliorata"
+    experimental_search_menu_groups: "SPERIMENTALE: attiva il nuovo menu di ricerca che è stato aggiornato per utilizzare glimmer."
     errors:
       invalid_css_color: "Colore non valido. Immettere un nome o un valore esadecimale per il colore."
       invalid_email: "Indirizzo email non valido."
@@ -2159,7 +2130,6 @@ it:
       staged_users_disabled: "Devi abilitare 'staged users' prima di attivare questa impostazione."
       reply_by_email_disabled: "Devi abilitare 'reply by email' prima di attivare questa impostazione ."
       discourse_connect_url_is_empty: "È necessario definire un 'discourse connect url' prima di abilitare questa impostazione."
-      discourse_connect_invite_only: "Non è possibile abilitare DiscourseConnect e solo inviti allo stesso tempo."
       enable_local_logins_disabled: "Prima di abilitare questa impostazione è necessario abilitare 'enable local logins'."
       min_username_length_exists: "Non è possibile impostare la lunghezza minima del nome utente a un valore maggiore di quella del nome utente più breve (%{username})."
       min_username_length_range: "Non puoi impostare il minimo più grande del massimo."
@@ -3030,15 +3000,6 @@ it:
       title: "Scaricamento Immagini Remote Disabilitato"
       subject_template: "Lo scaricamento delle immagini remote è disabilitato"
       text_body_template: "L'impostazione `download_remote_images_to_local` è stata disabilitata perché è stato raggiunto il limite di spazio su disco definito in `download_remote_images_threshold`."
-    dashboard_problems:
-      title: "Problemi dashboard"
-      subject_template: "Nuovo avviso sul dashboard del tuo sito"
-      text_body_template: |
-        Abbiamo alcuni nuovi consigli e raccomandazioni per te in base alle attuali impostazioni del sito.
-
-        [Visita il dashboard del tuo sito](%{base_url}/admin) per vederli.
-
-        Se sul dashboard non è visibile nulla, è possibile che un altro membro del personale abbia già agito su questo avviso. Un elenco delle azioni dello staff è disponibile nei [Log delle Azioni Staff](%{base_url}/admin/logs/staff_action_logs).
     new_user_of_the_month:
       title: "Sei il Nuovo Utente del Mese!"
       subject_template: "Sei il Nuovo Utente del Mese!"
@@ -3539,11 +3500,6 @@ it:
   offline:
     title: "Impossibile caricare l'app"
     offline_page_message: "Sembra che tu sia offline! Controlla la tua connessione di rete e riprova."
-  login_required:
-    welcome_message: |
-      ## [Benvenuto su %{title}](#welcome)
-      E' richiesto un account. Per continuare, crea un nuovo account oppure accedi.
-    welcome_message_invite_only: "## [Benvenuto su %{title}](#benvenuto) \nÈ richiesto un account. Per favore, chiedi a un membro esistente un invito o accedi per continuare.\n"
   upload:
     edit_reason: "copie locali delle immagini scaricate"
     unauthorized: "Spiacenti, il file che stai cercando di caricare non è autorizzato (estensioni autorizzate: %{authorized_extensions})."

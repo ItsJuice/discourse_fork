@@ -117,6 +117,9 @@
                 "can_recover": {
                   "type": "boolean"
                 },
+                "can_see_hidden_post": {
+                  "type": "boolean"
+                },
                 "can_wiki": {
                   "type": "boolean"
                 },
@@ -823,6 +826,12 @@
                   ]
                 },
                 "flair_bg_color": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "flair_group_id": {
                   "type": [
                     "string",
                     "null"

@@ -184,12 +184,6 @@ nl:
     software_update_prompt:
       message: "We hebben deze site bijgewerkt, dus <span>vernieuw de pagina</span>, anders kan er onverwacht gedrag optreden."
       dismiss: "Negeren"
-    bootstrap_mode_enabled:
-      one: "Om het opzetten van je nieuwe website makkelijker te maken, bevind je je in de bootstrapmodus. Aan alle nieuwe gebruikers wordt vertrouwensniveau 1 toegekend en dagelijkse e-mailsamenvattingen zijn ingeschakeld voor hen. Dit wordt automatisch uitgeschakeld zodra %{count} gebruiker lid is geworden."
-      other: "Om het opzetten van je nieuwe website makkelijker te maken, bevind je je in de bootstrapmodus. Aan alle nieuwe gebruikers wordt vertrouwensniveau 1 toegekend en dagelijkse e-mailsamenvattingen zijn ingeschakeld voor hen. Dit wordt automatisch uitgeschakeld zodra %{count} gebruikers lid zijn geworden."
-    bootstrap_mode_disabled: "De bootstrapmodus wordt binnen 24 uur uitgeschakeld."
-    bootstrap_invite_button_title: "Uitnodigingen sturen"
-    bootstrap_wizard_link_title: "Instelwizard voltooien"
     themes:
       default_description: "Standaard"
       broken_theme_alert: "Je website werkt mogelijk niet, omdat het thema/onderdeel fouten bevat."
@@ -348,7 +342,6 @@ nl:
       new_topic: "Nieuw topicconcept"
       new_private_message: "Nieuw privéberichtconcept"
       abandon:
-        confirm: "Je hebt een concept in uitvoering voor dit topic. Wat wil je ermee doen?"
         yes_value: "Weggooien"
         no_value: "Bewerken hervatten"
     topic_count_categories:
@@ -1094,11 +1087,8 @@ nl:
         enable: "Zijbalk inschakelen"
         options: "Opties"
         categories_section: "Categorieënsectie"
-        categories_section_instruction: "Geselecteerde categorieën worden weergegeven onder de sectie Categorieën van de zijbalk."
         tags_section: "Tagssectie"
-        tags_section_instruction: "Geselecteerde tags worden weergegeven onder de sectie Tags van de zijbalk."
         navigation_section: "Navigatie"
-        list_destination_instruction: "Wanneer er nieuwe inhoud in de zijbalk is..."
         list_destination_default: "standaardlink gebruiken en een badge weergeven voor nieuwe items"
         list_destination_unread_new: "linken naar ongelezen/nieuw en het aantal nieuwe items weergeven"
       change: "wijzigen"
@@ -1170,13 +1160,6 @@ nl:
       save_to_change_theme: 'Thema wordt bijgewerkt nadat je op ''%{save_text}'' klikt'
       home: "Standaard startpagina"
       staged: "Gefaseerd"
-      staff_counters:
-        flags_given: "nuttige markeringen"
-        flagged_posts: "gemarkeerde berichten"
-        deleted_posts: "verwijderde berichten"
-        suspensions: "schorsingen"
-        warnings_received: "waarschuwingen"
-        rejected_posts: "geweigerde berichten"
       messages:
         all: "alle inboxen"
         inbox: "Inbox"
@@ -1269,7 +1252,6 @@ nl:
         tags: "Tags"
         interface: "Interface"
         apps: "Apps"
-        sidebar: "Zijbalk"
       change_password:
         success: "(e-mail verzonden)"
         in_progress: "(e-mail verzenden)"
@@ -1283,11 +1265,9 @@ nl:
         title: "Back-upcodes voor tweeledige verificatie"
         regenerate: "Opnieuw genereren"
         disable: "Uitschakelen"
-        enable: "Inschakelen"
-        enable_long: "Back-upcodes inschakelen"
         manage:
-          one: "Back-upcodes beheren. Je hebt nog <strong>%{count}</strong> back-upcode over."
-          other: "Back-upcodes beheren. Je hebt nog <strong>%{count}</strong> back-upcodes over."
+          one: "Je hebt nog <strong>%{count}</strong> back-upcode over."
+          other: "Je hebt nog <strong>%{count}</strong> back-upcodes over."
         copy_to_clipboard: "Kopiëren naar klembord"
         copy_to_clipboard_error: "Fout bij kopiëren van gegevens naar klembord"
         copied_to_clipboard: "Gekopieerd naar klembord"
@@ -1776,36 +1756,6 @@ nl:
       logout_disabled: "Afmelden is uitgeschakeld zolang de website zich in de alleen-lezenmodus bevindt."
     staff_writes_only_mode:
       enabled: "Deze site is in de medewerkermodus. Ga door met bekijken, maar antwoorden, liken en andere acties zijn beperkt tot medewerkers."
-    too_few_topics_and_posts_notice_MF: |
-      Laten we <a href="https://blog.discourse.org/2014/08/building-a-discourse-community/" target="_blank" rel="noopener noreferrer">de discussie starten!</a> Er { currentTopics, plural,
-          one {is <strong>#</strong> topic}
-        other {zijn <strong>#</strong> topics}
-      } en { currentPosts, plural,
-          one {<strong>#</strong> bericht}
-        other {<strong>#</strong> berichten}
-      }. Bezoekers hebben meer nodig om te lezen en op te antwoorden – wij raden minimaal { requiredTopics, plural,
-          one {<strong>#</strong> topic}
-        other {<strong>#</strong> topics}
-      } en { requiredPosts, plural,
-          one {<strong>#</strong> bericht}
-        other {<strong>#</strong> berichten}
-      } aan. Alleen personeel kan dit bericht zien.
-    too_few_topics_notice_MF: |
-      Laten we <a href="https://blog.discourse.org/2014/08/building-a-discourse-community/" target="_blank" rel="noopener noreferrer">de discussie starten!</a> Er { currentTopics, plural,
-          one {is <strong>#</strong> topic}
-        other {zijn <strong>#</strong> topics}
-      }. Bezoekers hebben meer nodig om te lezen en op te antwoorden – wij raden minimaal { requiredTopics, plural,
-          one {<strong>#</strong> topic}
-        other {<strong>#</strong> topics}
-      } aan. Alleen personeel kan dit bericht zien.
-    too_few_posts_notice_MF: |
-      Laten we <a href="https://blog.discourse.org/2014/08/building-a-discourse-community/" target="_blank" rel="noopener noreferrer">de discussie starten!</a> Er { currentPosts, plural,
-          one {is <strong>#</strong> post}
-        other {zijn <strong>#</strong> posts}
-      }. Bezoekers hebben meer nodig om te lezen en op te antwoorden – wij raden minimaal { requiredPosts, plural,
-          one {<strong>#</strong> bericht}
-        other {<strong>#</strong> berichten}
-      } aan. Alleen personeel kan dit bericht zien.
     logs_error_rate_notice:
       reached_hour_MF: |
         <b>{relativeAge}</b> – <a href='{url}' target='_blank'>{rate, plural, one {# fout/uur} other {# fouten/uur}}</a> heeft de limiet voor de website-instelling van {limit, plural, one {# fout/uur} other {# fouten/uur}} bereikt.
@@ -1842,7 +1792,6 @@ nl:
         other: "Er zijn <b>%{count}</b> antwoorden."
       description_time_MF: |
         Er {replyCount, plural, one {is <b>#</b> antwoord} other {zijn <b>#</b> antwoorden}} met een geschatte leestijd van <b>{readingTime, plural, one {# minuut} other {# minuten}}</b>.
-      enable: "Vat dit topic samen"
       disable: "Alle berichten weergeven"
       short_label: "Samenvatten"
       short_title: "Bekijk een samenvatting van dit topic: de interessantste berichten volgens de community"
@@ -2308,6 +2257,7 @@ nl:
       reaction_2: "<span>%{username}, %{username2}</span> %{description}"
       votes_released: "%{description} - voltooid"
       new_features: "Nieuwe functies beschikbaar!"
+      admin_problems: "Nieuw advies op je websitedashboard"
       dismiss_confirmation:
         body:
           default:
@@ -2612,7 +2562,7 @@ nl:
         top: "Er zijn geen toptopics."
         educate:
           new: '<p>Hier worden je nieuwe topics weergegeven. Standaard worden topics als nieuw beschouwd en wordt de indicator <span class="badge new-topic badge-notification" style="vertical-align:middle;line-height:inherit;"></span> weergegeven als ze de afgelopen 2 dagen zijn gemaakt.</p><p>Ga naar je <a href="%{userPrefsUrl}">voorkeuren</a> om dit te wijzigen.</p>'
-          unread: "<p>Je ongelezen topics worden hier weergegeven.</p><p>Standaard worden topics als ongelezen beschouwd en wordt het aantal ongelezen berichten aangegeven <span class=\"badge unread-posts badge-notification\">1</span> als je:</p><ul><li>Het topic hebt gemaakt</li><li>Op het topic hebt geantwoord</li><li>Het topic langer dan 4 minuten hebt gelezen</li></ul><p>Of als je het topic expliciet hebt ingesteld op \"Gevolgd\" of \"Geobserveerd\" via de \U0001F514 in elk topic.</p><p>Ga naar je <a href=\"%{userPrefsUrl}\">voorkeuren</a> om dit te wijzigen.</p>"
+          unread: "<p>Je ongelezen topics worden hier weergegeven.</p><p>Standaard worden topics als ongelezen beschouwd en wordt het aantal ongelezen berichten aangegeven <span class=\"badge unread-posts badge-notification\">1</span> als je:</p><ul><li>Het topic hebt gemaakt</li><li>Op het topic hebt geantwoord</li><li>Het topic langer dan 5 minuten hebt gelezen</li></ul><p>Of als je het topic expliciet hebt ingesteld op \"Gevolgd\" of \"Geobserveerd\" via de \U0001F514 in elk topic.</p><p>Ga naar je <a href=\"%{userPrefsUrl}\">voorkeuren</a> om dit te wijzigen.</p>"
       bottom:
         latest: "Er zijn verder geen nieuwste topics."
         posted: "Er zijn verder geen geplaatste topics."
@@ -3752,7 +3702,6 @@ nl:
         one: "Deze badge is %{count} keer verdiend"
         other: "Deze badge is %{count} keer verdiend"
       granted_on: "Toegekend op %{date}"
-      others_count: "Anderen met deze badge (%{count})"
       title: Badges
       allow_title: "Je kunt deze badge als een titel gebruiken"
       multiple_grant: "Je kunt dit meerdere keren verdienen"
@@ -3988,14 +3937,20 @@ nl:
       more: "Meer"
       all_categories: "Alle categorieën"
       all_tags: "Alle tags"
+      categories_form_modal:
+        save: "Opslaan"
       sections:
         custom:
           save: "Opslaan"
           delete: "Verwijderen"
           links:
-            icon: "Pictogram"
-            name: "Naam"
-            value: "Link"
+            reset: "Standaard herstellen"
+            icon:
+              label: "Pictogram"
+            name:
+              label: "Naam"
+            value:
+              label: "Link"
         about:
           header_link_text: "Over"
         messages:
@@ -4010,20 +3965,12 @@ nl:
             unread_with_count: "Ongelezen (%{count})"
             archive: "Archief"
         tags:
-          links:
-            add_tags:
-              content: "Tags toevoegen"
-              title: "Je hebt geen tags toegevoegd. Klik om te beginnen."
           none: "Je hebt geen tags toegevoegd."
           click_to_get_started: "Klik hier om te beginnen."
           header_link_text: "Tags"
           header_action_title: "Bewerk je zijbalktags"
           configure_defaults: "Standaardinstellingen configureren"
         categories:
-          links:
-            add_categories:
-              content: "Categorieën toevoegen"
-              title: "Je hebt geen categorieën toegevoegd. Klik om te beginnen."
           none: "Je hebt geen categorieën toegevoegd."
           click_to_get_started: "Klik hier om te beginnen."
           header_link_text: "Categorieën"
@@ -4031,7 +3978,7 @@ nl:
           configure_defaults: "Standaardinstellingen configureren"
         community:
           header_link_text: "Community"
-          header_action_title: "Maak een topic"
+          header_action_create_topic_title: "Maak een topic"
           links:
             about:
               content: "Over"
@@ -4042,8 +3989,8 @@ nl:
             badges:
               content: "Badges"
               title: "Alle beschikbare badges om te verdienen"
-            everything:
-              content: "Alles"
+            topics:
+              content: "Topics"
               title: "Alle topics"
             faq:
               content: "FAQ"
@@ -4389,9 +4336,6 @@ nl:
         user_promoted_event:
           name: "Door gebruiker gepromoot evenement"
           details: "Wanneer een gebruiker wordt gepromoveerd van het ene vertrouwensniveau naar het andere."
-        user_badge_event:
-          name: "Badgetoekenningsgebeurtenis"
-          details: "Wanneer een gebruiker een badge ontvangt."
         group_user_event:
           name: "Groepgebruikersgebeurtenis"
           details: "Wanneer een gebruiker wordt toegevoegd of verwijderd in een groep."
@@ -5051,14 +4995,8 @@ nl:
           silence: "Dempen"
           link: "Link"
         action_descriptions:
-          block: "Het plaatsen van berichten die deze woorden bevatten tegengaan. Gebruikers zien een foutbericht wanneer ze hun bericht proberen te verzenden."
-          censor: "Berichten met deze woorden toestaan, maar deze vervangen door tekens die de gecensureerde woorden verbergen."
-          require_approval: "Berichten die deze woorden bevatten, vereisen goedkeuring door medewerkers voordat ze kunnen worden bekeken."
-          flag: "Sta berichten met deze woorden toe, maar markeer ze als ongepast, zodat moderators ze kunnen beoordelen."
-          replace: "Vervang woorden in berichten door andere woorden"
-          tag: "Tag topics automatisch op basis van het eerste bericht"
-          silence: "Eerste berichten van gebruikers die deze woorden bevatten, moeten door een medewerker worden goedgekeurd voordat ze zichtbaar worden en de gebruiker wordt automatisch gedempt."
-          link: "Woorden in berichten vervangen door links"
+          replace: "Vervang woorden in berichten door andere woorden."
+          link: "Woorden in berichten vervangen door links."
         form:
           label: "Bevat woord of zin"
           placeholder: "Voer woord of zin in (* is een joker)"
@@ -5110,6 +5048,8 @@ nl:
               key: "minimum"
             maximum:
               key: "maximum"
+            type:
+              key: "type"
       impersonate:
         title: "Imiteren"
         help: "Gebruik deze tool om een gebruikersaccount te imiteren voor debugdoeleinden. Je moet je afmelden wanneer je klaar bent."
@@ -5460,7 +5400,6 @@ nl:
             label: "Emoji toevoegen"
         title: "Instellingen"
         no_results: "Geen resultaten gevonden."
-        more_than_30_results: "Er zijn meer dan 30 resultaten. Verfijn je zoekopdracht of selecteer een categorie."
         clear_filter: "Wissen"
         add_url: "URL toevoegen"
         add_host: "host toevoegen"

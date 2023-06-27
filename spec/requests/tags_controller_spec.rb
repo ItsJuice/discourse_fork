@@ -434,6 +434,28 @@ RSpec.describe TagsController do
       expect(response.status).to eq(200)
     end
 
+    it "can handle additional tags in query params" do
+      tag2 = Fabricate(:tag)
+      topic_with_two_tags = Fabricate(:topic, tags: [tag, tag2])
+
+      get "/tag/test.json?match_all_tags=true&tags[]=#{tag2.name}"
+      expect(response.status).to eq(200)
+      expect(response.parsed_body["topic_list"]["topics"].map { |t| t["id"] }).to contain_exactly(
+        topic_with_two_tags.id,
+      )
+    end
+
+    it "can handle duplicate tags in query params" do
+      tag2 = Fabricate(:tag)
+      topic_with_two_tags = Fabricate(:topic, tags: [tag, tag2])
+
+      get "/tag/test.json?match_all_tags=true&tags[]=test&tags[]=#{tag2.name}"
+      expect(response.status).to eq(200)
+      expect(response.parsed_body["topic_list"]["topics"].map { |t| t["id"] }).to contain_exactly(
+        topic_with_two_tags.id,
+      )
+    end
+
     it "handles special tag 'none'" do
       SiteSetting.pm_tags_allowed_for_groups = "1|2|3"
 
@@ -1090,6 +1112,15 @@ RSpec.describe TagsController do
         )
       end
 
+      it "returns error 400 for suspicious limit" do
+        get "/tags/filter/search.json", params: { q: "", limit: "1; SELECT 1" }
+
+        expect(response.status).to eq(400)
+        expect(response.parsed_body["errors"].first).to eq(
+          I18n.t("invalid_params", message: "limit"),
+        )
+      end
+
       it "includes required tag group information" do
         tag1 = Fabricate(:tag)
         tag2 = Fabricate(:tag)
@@ -1316,18 +1347,19 @@ RSpec.describe TagsController do
   end
 
   describe "#destroy_synonym" do
+    subject(:destroy_synonym) { delete("/tag/#{tag.name}/synonyms/#{synonym.name}.json") }
+
     fab!(:tag) { Fabricate(:tag) }
     fab!(:synonym) { Fabricate(:tag, target_tag: tag, name: "synonym") }
-    subject { delete("/tag/#{tag.name}/synonyms/#{synonym.name}.json") }
 
     it "fails if not logged in" do
-      subject
+      destroy_synonym
       expect(response.status).to eq(403)
     end
 
     it "fails if not staff user" do
       sign_in(user)
-      subject
+      destroy_synonym
       expect(response.status).to eq(403)
     end
 
@@ -1336,7 +1368,7 @@ RSpec.describe TagsController do
 
       it "can remove a synonym from a tag" do
         synonym2 = Fabricate(:tag, target_tag: tag, name: "synonym2")
-        expect { subject }.to_not change { Tag.count }
+        expect { destroy_synonym }.to_not change { Tag.count }
         expect_same_tag_names(tag.reload.synonyms, [synonym2])
         expect(synonym.reload).to_not be_synonym
       end

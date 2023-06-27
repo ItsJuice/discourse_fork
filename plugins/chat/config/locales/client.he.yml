@@ -15,6 +15,7 @@ he:
           actions:
             chat_channel_status_change: "מצב ערוץ הצ׳אט השתנה"
             chat_channel_delete: "ערוץ הצ׳אט נמחק"
+            chat_auto_remove_membership: "חברות הוסרה אוטומטית מערוצים"
       api:
         scopes:
           descriptions:
@@ -83,8 +84,13 @@ he:
       click_to_join: "לחיצה כאן תציג את הערוצים הזמינים."
       close: "סגירה"
       collapse: "צמצום מגירת צ׳אט"
+      expand: "הרחבת מגירת הצ׳אט"
       confirm_flag: "לסמן את ההודעה של %{username}?"
-      deleted: "הודעה נמחקה. [צפייה]"
+      deleted:
+        one: "הודעה נמחקה. [הצגה]"
+        two: "%{count} הודעות נמחקו. [הצגה של הכול]"
+        many: "%{count} הודעות נמחקו. [הצגה של הכול]"
+        other: "%{count} הודעות נמחקו. [הצגה של הכול]"
       hidden: "הודעה הוסתרה. [צפייה]"
       delete: "מחיקה"
       edited: "נערך"
@@ -114,6 +120,15 @@ he:
       heading: "צ׳אט"
       join: "הצטרף"
       last_visit: "ביקור אחרון"
+      summarization:
+        title: "סיכום הודעות"
+        description: "נא לבחור אפשרות להלן כדי לסכם את הדיון שנשלח בפרק הזמן המבוקש."
+        summarize: "סיכום"
+        since:
+          one: "שעה אחרונה"
+          two: "השעתיים האחרונות"
+          many: "%{count} השעות האחרונות"
+          other: "%{count} השעות האחרונות"
       mention_warning:
         dismiss: "התעלמות"
         cannot_see: "ל־%{username} אין גישה לערוץ הזה ולא נשלחה התראה."
@@ -226,6 +241,7 @@ he:
         composer: "כותב צ׳אט"
         channels_list: "רשימת ערוצי צ׳אט"
       no_public_channels: "לא הצטרפת לאף ערוץ."
+      kicked_from_channel: "אין לך יותר גישה לערוץ הזה."
       only_chat_push_notifications:
         title: "לשלוח התראות בדחיפה על הצ׳אט בלבד"
         description: "לחסום שליחה של התראות בדחיפה שאינן לגבי הצ׳אט"
@@ -237,7 +253,8 @@ he:
       close_full_page: "סגירת צ׳אט במסך מלא"
       open_message: "פתיחת הודעה בצ׳אט"
       placeholder_self: "לקשקש משהו"
-      placeholder_channel: "צ׳אט עם %{channelName}"
+      placeholder_channel: "צ׳אט ב־%{channelName}"
+      placeholder_thread: "צ'אט בשרשור"
       placeholder_users: "צ׳אט עם %{commaSeparatedNames}"
       placeholder_new_message_disallowed:
         archived: "הערוץ הועבר לארכיון, אי אפשר לשלוח אליו הודעות חדשות כעת."
@@ -261,8 +278,13 @@ he:
       restore: "שחזור הודעה שנמחקה"
       save: "שמירה"
       select: "בחירה"
-      silence: "השתקת משתמש"
       return_to_list: "חזרה לרשימת הערוצים"
+      return_to_threads_list: "חזרה לדיונים שמתקיימים כרגע"
+      unread_threads_count:
+        one: "יש דיון שטרם קראת"
+        two: "יש %{count} דיונים שטרם קראת"
+        many: "יש %{count} דיונים שטרם קראת"
+        other: "יש %{count} דיונים שטרם קראת"
       scroll_to_bottom: "גלילה לתחתית"
       scroll_to_new_messages: "הצגת הודעות חדשות"
       sound:
@@ -274,6 +296,8 @@ he:
       title: "צ׳אט"
       title_capitalized: "צ׳אט"
       upload: "צירוף קובץ"
+      upload_to_channel: "העלאה אל %{title}"
+      upload_to_thread: "העלאה לשרשור"
       uploaded_files:
         one: "קובץ %{count}"
         two: "%{count} קבצים"
@@ -416,6 +440,7 @@ he:
         italic_text: "טקסט נטוי"
         bold_text: "טקסט מודגש"
         code_text: "טקסט קוד"
+        send: "שליחה"
       quote:
         original_channel: 'נשלח במקור ב־<a href="%{channelLink}">%{channel}</a>'
         copy_success: "ציטוט מהצ׳אט הועתק ללוח הגזירים"
@@ -549,10 +574,37 @@ he:
         symbols: "סמלים"
         search_placeholder: "חיפוש לפי שם וכינוי של האמוג׳י…"
         no_results: "אין תוצאות"
+      thread:
+        title: "כותרת"
+        view_thread: הצגת שרשור
+        default_title: "שרשור"
+        replies:
+          one: "תגובה אחת"
+          two: "%{count} תגובות"
+          many: "%{count} תגובות"
+          other: "%{count} תגובות"
+        label: שרשור
+        close: "סגירת שרשור"
+        original_message:
+          started_by: "נפתח ע״י"
+        settings: "הגדרות"
+        last_reply: "תגובה אחרונה"
+        notifications:
+          regular:
+            title: "רגיל"
+            description: "תישלח אליך התראה אם @שמך מוזכר בשרשור הזה."
+          tracking:
+            title: "מעקב"
+            description: "מספר התגובות החדשות בשרשור הזה יופיע ברשימת השרשורים ובערוץ. תישלח אליך התראה אם הזכירו את @שמך בשרשור הזה."
+        participants_other_count:
+          one: "+%{count} נוסף"
+          two: "+%{count} נוספים"
+          many: "+%{count} נוספים"
+          other: "+%{count} נוספים"
       threads:
-        op_said: "נאמר ע״י פותחי השרשור:"
-        started_by: "נפתח ע״י"
         open: "פתיחת שרשור"
+        list: "דיונים שמתקיימים כרגע"
+        none: "אין לך חלק באף אחד מהשרשורים בערוץ הזה."
       draft_channel_screen:
         header: "הודעה חדשה"
         cancel: "ביטול"
@@ -597,9 +649,8 @@ he:
       transcript:
         view: "הצגת תמלול הודעות קודמות"
       types:
-        reviewable_chat_message:
+        chat_reviewable_message:
           title: "הודעת צ׳אט מסומנת"
-          flagged_by: "דוגל על ידי"
     keyboard_shortcuts_help:
       chat:
         title: "צ׳אט"
@@ -612,6 +663,7 @@ he:
           composer_code: "%{shortcut} קוד (עורך בלבד)"
           drawer_open: "%{shortcut} פתיחת מגירת הצ׳אט"
           drawer_close: "%{shortcut} סגירת מגירת הצ׳אט"
+          mark_all_channels_read: "%{shortcut} סימון כל הערוצים כנקראו"
     topic_statuses:
       chat:
         help: "הצ׳אט מופעל בנושא הזה"
@@ -632,3 +684,7 @@ he:
           two: "התראות צ׳אט - %{count} התראות שלא נקראו"
           many: "התראות צ׳אט - %{count} התראות שלא נקראו"
           other: "התראות צ׳אט - %{count} התראות שלא נקראו"
+    styleguide:
+      sections:
+        chat:
+          title: צ׳אט

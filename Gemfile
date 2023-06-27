@@ -41,7 +41,7 @@ gem "actionview_precompiler", require: false
 
 gem "discourse-seed-fu"
 
-gem "mail", git: "https://github.com/discourse/mail.git"
+gem "mail"
 gem "mini_mime"
 gem "mini_suffix"
 
@@ -65,13 +65,11 @@ gem "http_accept_language", require: false
 
 gem "discourse-fonts", require: "discourse_fonts"
 
-gem "message_bus"
+gem "message_bus", "4.3.2"
 
 gem "rails_multisite"
 
 gem "fast_xs", platform: :ruby
-
-gem "xorcist"
 
 gem "fastimage"
 
@@ -147,6 +145,7 @@ group :test do
   gem "selenium-webdriver", require: false
   gem "test-prof"
   gem "webdrivers", require: false
+  gem "rails-dom-testing", require: false
 end
 
 group :test, :development do

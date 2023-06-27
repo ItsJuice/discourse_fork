@@ -10,7 +10,7 @@
   width: 100%;
   z-index: z("header");
   background-color: var(--header_background);
-  box-shadow: shadow("header");
+  box-shadow: var(--shadow-header);
   backface-visibility: hidden; /** do magic for scrolling performance **/
 
   > .wrap {
@@ -210,10 +210,11 @@
     right: 23.5px;
     z-index: z("base");
     margin-left: 0;
-    background: radial-gradient(transparent, var(--success));
     border-radius: 100%;
     width: 20px;
     height: 20px;
+    box-shadow: 0 0 0 rgba(var(--success-rgb), 1);
+    transform: scale(1);
     transform-origin: center;
     animation-iteration-count: infinite;
     animation-duration: 3s;
@@ -235,6 +236,7 @@
     position: relative;
   }
   .badge-notification {
+    border: 2px solid var(--header_background);
     position: absolute;
     z-index: z("base");
     left: 0;
@@ -444,4 +446,12 @@ $mobile-avatar-height: 1.532em;
     color: var(--header_primary-high);
     margin-left: 5px;
   }
+}
+
+.d-header-mode .bootstrap-mode {
+  border-radius: 2em;
+  color: var(--primary-medium);
+  font-size: var(--font-down-1);
+  margin-left: 0.5em;
+  padding: 0.25em 0.5em;
 }

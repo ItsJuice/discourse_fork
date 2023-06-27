@@ -19,7 +19,6 @@ import {
 } from "discourse/lib/topic-list-tracker";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { resetCustomUserNavMessagesDropdownRows } from "discourse/controllers/user-private-messages";
-import userFixtures from "discourse/tests/fixtures/user-fixtures";
 
 acceptance(
   "User Private Messages - user with no group messages",
@@ -43,6 +42,27 @@ acceptance(
         !exists(".group-notifications-button"),
         "displays the group notifications button"
       );
+    });
+
+    test("viewing group messages on subfolder setup", async function (assert) {
+      const router = this.container.lookup("router:main");
+      const originalRootURL = router.rootURL;
+
+      try {
+        router.set("rootURL", "/forum/");
+
+        await visit("/forum/u/eviltrout/messages");
+
+        const messagesDropdown = selectKit(".user-nav-messages-dropdown");
+
+        assert.strictEqual(
+          messagesDropdown.header().name(),
+          I18n.t("user.messages.inbox"),
+          "User personal inbox is selected in dropdown"
+        );
+      } finally {
+        router.set("rootURL", originalRootURL);
+      }
     });
 
     test("viewing messages of another user", async function (assert) {
@@ -943,33 +963,10 @@ acceptance(
       can_tag_topics: true,
     });
 
-    test("tags are not present on private messages - Mobile mode", async function (assert) {
+    test("tags are present on private messages - Mobile mode", async function (assert) {
       await visit("/u/eviltrout/messages");
       await click(".new-private-message");
-      assert.ok(!exists("#reply-control .mini-tag-chooser"));
-    });
-  }
-);
-
-acceptance(
-  "User Private Messages - user with uppercase username",
-  function (needs) {
-    needs.user();
-
-    needs.pretender((server, helper) => {
-      const response = cloneJSON(userFixtures["/u/charlie.json"]);
-      response.user.username = "chArLIe";
-      server.get("/u/charlie.json", () => helper.response(response));
-    });
-
-    test("viewing inbox", async function (assert) {
-      await visit("/u/charlie/messages");
-
-      assert.strictEqual(
-        query(".user-nav-messages-dropdown .selected-name").textContent.trim(),
-        "Inbox",
-        "menu defaults to Inbox"
-      );
+      assert.ok(exists("#reply-control .mini-tag-chooser"));
     });
   }
 );

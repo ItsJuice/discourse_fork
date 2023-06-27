@@ -165,8 +165,6 @@ ca:
     software_update_prompt:
       message: "Hem actualitzat aquest lloc, <span>si us plau actualitzeu</span>, o podeu experimentar un comportament inesperat."
       dismiss: "Descarta-ho"
-    bootstrap_mode_disabled: "El mode d'arrencada serà desactivat d'aquí a 24 hores."
-    bootstrap_invite_button_title: "Envia invitacions"
     themes:
       default_description: "Per defecte"
     s3:
@@ -309,7 +307,6 @@ ca:
       new_topic: "Esborrany de tema nou"
       new_private_message: "Nou esborrany de missatge personal"
       abandon:
-        confirm: "Teniu un esborrany en curs per a aquest tema. Què t'agradaria fer-hi?"
         yes_value: "Descarta"
         no_value: "Reprèn l'edició"
     topic_count_categories:
@@ -969,12 +966,6 @@ ca:
       theme: "Aparença"
       home: "Pàgina d'inici per defecte"
       staged: "Fictici"
-      staff_counters:
-        flags_given: "banderes útils"
-        flagged_posts: "publicacions amb banderes"
-        deleted_posts: "publicacions suprimides"
-        suspensions: "suspensions"
-        warnings_received: "avisos"
       messages:
         inbox: "Safata d'entrada"
         latest: "Més recents"
@@ -1017,8 +1008,6 @@ ca:
       second_factor_backup:
         regenerate: "Regenera"
         disable: "Desactiva"
-        enable: "Activa"
-        enable_long: "Activa els codis de còpia de seguretat"
         copy_to_clipboard: "Copia al porta-retalls"
         copy_to_clipboard_error: "Error copiant dades al porta-retalls"
         copied_to_clipboard: "Copiat al porta-retalls."
@@ -1394,7 +1383,6 @@ ca:
       intro: "Bon dia! Sembla que gaudiu de la discussió, però no heu registrat un compte."
     summary:
       enabled_description: "Ara veieu un resum del tema: les publicacions més interessants segons la comunitat."
-      enable: "Resumeix aquest tema"
       disable: "Mostra totes les publicacions"
     deleted_filter:
       enabled_description: "Aquest tema conté publicacions suprimides, que han estat amagades."
@@ -1726,6 +1714,7 @@ ca:
       membership_request_accepted: "Membre acceptat en '%{group_name}'"
       reaction: "<span>%{username}</span> %{description}"
       reaction_2: "<span>%{username}, %{username2}</span> %{description}"
+      admin_problems: "Nou consell al tauler de control del vostre lloc web"
       dismiss_confirmation:
         dismiss: "Descarta-ho"
         cancel: "Cancel·la"
@@ -2755,7 +2744,6 @@ ca:
         one: "Ha rebut aquesta insígnia %{count} vegada."
         other: "Ha rebut aquesta insígnia%{count} vegades."
       granted_on: "Concedit %{date}"
-      others_count: "Altres amb aquesta insígnia (%{count})"
       title: Insígnies
       allow_title: "Podeu fer servir aquesta insígnia com a títol"
       multiple_grant: "Podeu guanyar-la diverses vegades"
@@ -2886,13 +2874,18 @@ ca:
         other: "%{count} nous"
       more: "Més"
       all_categories: "Totes les categories"
+      categories_form_modal:
+        save: "Desa"
       sections:
         custom:
           save: "Desa"
           delete: "Suprimeix"
           links:
-            icon: "Icona"
-            name: "Nom"
+            reset: "Restableix el valor predeterminat"
+            icon:
+              label: "Icona"
+            name:
+              label: "Nom"
         about:
           header_link_text: "Quant a"
         messages:
@@ -2918,8 +2911,8 @@ ca:
               content: "Administració"
             badges:
               content: "Insígnies"
-            everything:
-              content: "Qualsevol cosa"
+            topics:
+              content: "Temes"
             faq:
               content: "PMF"
             groups:
@@ -3731,11 +3724,6 @@ ca:
           flag: "Bandera"
           replace: "Reemplaça"
           silence: "Silencia"
-        action_descriptions:
-          block: "Impedeix que es publiquin texts que continguin aquestes paraules. L'usuari veurà un missatge d'error quan intenti enviar la publicació. "
-          censor: "Permet publicacions que contenen aquestes paraules, però reemplaça-les amb caràcters que amaguin les paraules censurades."
-          require_approval: "Les publicacions que continguin aquestes paraules requeriran aprovació per l'equip responsable abans que puguin ser vistes. "
-          flag: "Permet publicacions que contenen aquestes paraules, però senyala-les amb bandera com a inapropiades de manera que els moderadors puguin revisar-les"
         form:
           placeholder_regexp: "expressió regular"
           link_placeholder: "https://example.com"
@@ -3774,6 +3762,8 @@ ca:
           validations:
             required:
               key: "necessari"
+            type:
+              key: "tipus"
       impersonate:
         title: "Suplanta"
         help: "Feu servir aquesta eina per a suplantar comptes amb l'objectiu de depurar. Haureu de tancar la sessió quan acabeu."
@@ -4047,7 +4037,6 @@ ca:
       site_settings:
         title: "Configuració"
         no_results: "Sense resultats"
-        more_than_30_results: "Hi ha més de 30 resultats. Restringiu la cerca o seleccioneu una categoria."
         clear_filter: "Neteja"
         add_url: "afegeix URL"
         add_host: "afegeix amfitrió"

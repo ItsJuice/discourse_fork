@@ -75,7 +75,7 @@ describe Chat::Message do
       post = Fabricate(:post, topic: topic)
       SiteSetting.external_system_avatars_enabled = false
       avatar_src =
-        "//test.localhost#{User.system_avatar_template(post.user.username).gsub("{size}", "40")}"
+        "//test.localhost#{User.system_avatar_template(post.user.username).gsub("{size}", "48")}"
 
       cooked = described_class.cook(<<~RAW)
       [quote="#{post.user.username}, post:#{post.post_number}, topic:#{topic.id}"]
@@ -87,8 +87,7 @@ describe Chat::Message do
       <aside class="quote no-group" data-username="#{post.user.username}" data-post="#{post.post_number}" data-topic="#{topic.id}">
       <div class="title">
       <div class="quote-controls"></div>
-      <img loading="lazy" alt="" width="20" height="20" src="#{avatar_src}" class="avatar"><a href="http://test.localhost/t/some-quotable-topic/#{topic.id}/#{post.post_number}">#{topic.title}</a>
-      </div>
+      <img loading="lazy" alt="" width="24" height="24" src="#{avatar_src}" class="avatar"><a href="http://test.localhost/t/some-quotable-topic/#{topic.id}/#{post.post_number}">#{topic.title}</a></div>
       <blockquote>
       <p>Mark me...this will go down in history.</p>
       </blockquote>
@@ -101,9 +100,9 @@ describe Chat::Message do
       user = Fabricate(:user, username: "chatbbcodeuser")
       user2 = Fabricate(:user, username: "otherbbcodeuser")
       avatar_src =
-        "//test.localhost#{User.system_avatar_template(user.username).gsub("{size}", "40")}"
+        "//test.localhost#{User.system_avatar_template(user.username).gsub("{size}", "48")}"
       avatar_src2 =
-        "//test.localhost#{User.system_avatar_template(user2.username).gsub("{size}", "40")}"
+        "//test.localhost#{User.system_avatar_template(user2.username).gsub("{size}", "48")}"
       msg1 =
         Fabricate(
           :chat_message,
@@ -131,36 +130,29 @@ describe Chat::Message do
       expect(cooked).to eq(<<~COOKED.chomp)
         <div class="chat-transcript chat-transcript-chained" data-message-id="#{msg1.id}" data-username="chatbbcodeuser" data-datetime="#{msg1.created_at.iso8601}" data-channel-name="testchannel" data-channel-id="#{chat_channel.id}">
         <div class="chat-transcript-meta">
-        Originally sent in <a href="/chat/c/-/#{chat_channel.id}">testchannel</a>
-        </div>
+        Originally sent in <a href="/chat/c/-/#{chat_channel.id}">testchannel</a></div>
         <div class="chat-transcript-user">
         <div class="chat-transcript-user-avatar">
-        <img loading="lazy" alt="" width="20" height="20" src="#{avatar_src}" class="avatar">
-        </div>
+        <img loading="lazy" alt="" width="24" height="24" src="#{avatar_src}" class="avatar"></div>
         <div class="chat-transcript-username">
         chatbbcodeuser</div>
         <div class="chat-transcript-datetime">
-        <a href="/chat/c/-/#{chat_channel.id}/#{msg1.id}" title="#{msg1.created_at.iso8601}"></a>
-        </div>
+        <a href="/chat/c/-/#{chat_channel.id}/#{msg1.id}" title="#{msg1.created_at.iso8601}"></a></div>
         </div>
         <div class="chat-transcript-messages">
-        <p>this is the first message</p>
-        </div>
+        <p>this is the first message</p></div>
         </div>
         <div class="chat-transcript chat-transcript-chained" data-message-id="#{msg2.id}" data-username="otherbbcodeuser" data-datetime="#{msg2.created_at.iso8601}">
         <div class="chat-transcript-user">
         <div class="chat-transcript-user-avatar">
-        <img loading="lazy" alt="" width="20" height="20" src="#{avatar_src2}" class="avatar">
-        </div>
+        <img loading="lazy" alt="" width="24" height="24" src="#{avatar_src2}" class="avatar"></div>
         <div class="chat-transcript-username">
         otherbbcodeuser</div>
         <div class="chat-transcript-datetime">
-        <span title="#{msg2.created_at.iso8601}"></span>
-        </div>
+        <span title="#{msg2.created_at.iso8601}"></span></div>
         </div>
         <div class="chat-transcript-messages">
-        <p>and another cool one</p>
-        </div>
+        <p>and another cool one</p></div>
         </div>
       COOKED
     end
@@ -249,7 +241,7 @@ describe Chat::Message do
       )
     end
 
-    it "supports hashtag-autocomplete plugin" do
+    it "supports hashtag autocomplete" do
       SiteSetting.chat_enabled = true
       SiteSetting.enable_experimental_hashtag_autocomplete = true
 
@@ -258,9 +250,18 @@ describe Chat::Message do
 
       cooked = described_class.cook("##{category.slug}", user_id: user.id)
 
-      expect(cooked).to eq(
-        "<p><a class=\"hashtag-cooked\" href=\"#{category.url}\" data-type=\"category\" data-slug=\"#{category.slug}\"><svg class=\"fa d-icon d-icon-folder svg-icon svg-node\"><use href=\"#folder\"></use></svg><span>#{category.name}</span></a></p>",
-      )
+      expect(cooked).to have_tag(
+        "a",
+        with: {
+          class: "hashtag-cooked",
+          href: category.url,
+          "data-type": "category",
+          "data-slug": category.slug,
+          "data-id": category.id,
+        },
+      ) do
+        with_tag("span", with: { class: "hashtag-icon-placeholder" })
+      end
     end
 
     it "supports censored plugin" do
@@ -451,7 +452,7 @@ describe Chat::Message do
       notification = Fabricate(:notification)
       mention_1 = Fabricate(:chat_mention, chat_message: message_1, notification: notification)
 
-      message_1.destroy!
+      message_1.reload.destroy!
 
       expect { mention_1.reload }.to raise_error(ActiveRecord::RecordNotFound)
       expect { notification.reload }.to raise_error(ActiveRecord::RecordNotFound)
@@ -461,24 +462,20 @@ describe Chat::Message do
       message_1 = Fabricate(:chat_message)
       webhook_1 = Fabricate(:chat_webhook_event, chat_message: message_1)
 
-      message_1.destroy!
+      # Need to reload because chat_webhook_event instantiates the message
+      # before the relationship is created
+      message_1.reload.destroy!
 
       expect { webhook_1.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it "destroys upload_references and chat_uploads" do
+    it "destroys upload_references" do
       message_1 = Fabricate(:chat_message)
       upload_reference_1 = Fabricate(:upload_reference, target: message_1)
       upload_1 = Fabricate(:upload)
-      # TODO (martin) Remove this when we remove ChatUpload completely, 2023-04-01
-      DB.exec(<<~SQL)
-        INSERT INTO chat_uploads(upload_id, chat_message_id, created_at, updated_at)
-        VALUES(#{upload_1.id}, #{message_1.id}, NOW(), NOW())
-      SQL
 
       message_1.destroy!
 
-      expect(DB.query("SELECT * FROM chat_uploads WHERE upload_id = #{upload_1.id}")).to eq([])
       expect { upload_reference_1.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
@@ -491,7 +488,7 @@ describe Chat::Message do
         message_1 = Fabricate(:chat_message)
         bookmark_1 = Fabricate(:bookmark, bookmarkable: message_1)
 
-        message_1.destroy!
+        message_1.reload.destroy!
 
         expect { bookmark_1.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
@@ -537,22 +534,19 @@ describe Chat::Message do
     it "creates an UploadReference record for the provided uploads" do
       chat_message.attach_uploads([upload_1, upload_2])
       upload_references = UploadReference.where(upload_id: [upload_1, upload_2])
-      expect(chat_upload_count([upload_1, upload_2])).to eq(0)
       expect(upload_references.count).to eq(2)
       expect(upload_references.map(&:target_id).uniq).to eq([chat_message.id])
-      expect(upload_references.map(&:target_type).uniq).to eq([Chat::Message.sti_name])
+      expect(upload_references.map(&:target_type).uniq).to eq([described_class.polymorphic_name])
     end
 
     it "does nothing if the message record is new" do
       expect { described_class.new.attach_uploads([upload_1, upload_2]) }.to not_change {
-        chat_upload_count
-      }.and not_change { UploadReference.count }
+        UploadReference.count
+      }
     end
 
     it "does nothing for an empty uploads array" do
-      expect { chat_message.attach_uploads([]) }.to not_change {
-        chat_upload_count
-      }.and not_change { UploadReference.count }
+      expect { chat_message.attach_uploads([]) }.to not_change { UploadReference.count }
     end
   end
 
@@ -561,17 +555,22 @@ describe Chat::Message do
     fab!(:user1) { Fabricate(:user) }
     fab!(:user2) { Fabricate(:user) }
 
-    it "creates mentions for passed user ids" do
-      mentioned_user_ids = [user1.id, user2.id]
-      message.create_mentions(mentioned_user_ids)
+    it "creates mentions for mentioned  usernames" do
+      message.message = "Mentioning @#{user1.username} and @#{user2.username}"
+      message.cook
+
+      message.create_mentions
       message.reload
 
-      expect(message.chat_mentions.pluck(:user_id)).to match_array(mentioned_user_ids)
+      expect(message.chat_mentions.pluck(:user_id)).to match_array([user1.id, user2.id])
     end
 
-    it "ignores duplicates in passed user ids" do
-      mentioned_user_ids = [user1.id, user1.id, user1.id, user1.id, user1.id]
-      message.create_mentions(mentioned_user_ids)
+    it "ignores duplicated mentions" do
+      message.message =
+        "Mentioning @#{user1.username} @#{user1.username} @#{user1.username} @#{user1.username}"
+      message.cook
+
+      message.create_mentions
       message.reload
 
       expect(message.chat_mentions.pluck(:user_id)).to contain_exactly(user1.id)
@@ -579,28 +578,34 @@ describe Chat::Message do
   end
 
   describe "#update_mentions" do
-    fab!(:message) { Fabricate(:chat_message) }
     fab!(:user1) { Fabricate(:user) }
     fab!(:user2) { Fabricate(:user) }
     fab!(:user3) { Fabricate(:user) }
     fab!(:user4) { Fabricate(:user) }
+    fab!(:message) do
+      Fabricate(:chat_message, message: "Hey @#{user1.username} and @#{user2.username}")
+    end
     let(:already_mentioned) { [user1.id, user2.id] }
-
-    before { message.create_mentions(already_mentioned) }
 
     it "creates newly added mentions" do
       existing_mention_ids = message.chat_mentions.pluck(:id)
+      message.message = message.message + " @#{user3.username} @#{user4.username} "
+      message.cook
 
-      mentioned_user_ids = [*already_mentioned, user3.id, user4.id]
-      message.update_mentions(mentioned_user_ids)
+      message.update_mentions
       message.reload
 
-      expect(message.chat_mentions.pluck(:user_id)).to match_array(mentioned_user_ids)
+      expect(message.chat_mentions.pluck(:user_id)).to match_array(
+        [user1.id, user2.id, user3.id, user4.id],
+      )
       expect(message.chat_mentions.pluck(:id)).to include(*existing_mention_ids) # existing mentions weren't recreated
     end
 
     it "drops removed mentions" do
-      message.update_mentions([user1.id]) # user 2 is not mentioned anymore
+      message.message = "Hey @#{user1.username}" # user 2 is not mentioned anymore
+      message.cook
+
+      message.update_mentions
       message.reload
 
       expect(message.chat_mentions.pluck(:user_id)).to contain_exactly(user1.id)
@@ -608,21 +613,14 @@ describe Chat::Message do
 
     it "changes nothing if passed mentions are identical to existing mentions" do
       existing_mention_ids = message.chat_mentions.pluck(:id)
+      message.message = message.message
+      message.cook
 
-      mentioned_user_ids = [*already_mentioned]
-      message.update_mentions(mentioned_user_ids)
+      message.update_mentions
       message.reload
 
-      expect(message.chat_mentions.pluck(:user_id)).to match_array(mentioned_user_ids)
+      expect(message.chat_mentions.pluck(:user_id)).to match_array(already_mentioned)
       expect(message.chat_mentions.pluck(:id)).to include(*existing_mention_ids) # the mentions weren't recreated
     end
-  end
-
-  # TODO (martin) Remove this when we remove ChatUpload completely, 2023-04-01
-  def chat_upload_count(uploads = nil)
-    return DB.query_single("SELECT COUNT(*) FROM chat_uploads").first if !uploads
-    DB.query_single(
-      "SELECT COUNT(*) FROM chat_uploads WHERE upload_id IN (#{uploads.map(&:id).join(",")})",
-    ).first
   end
 end

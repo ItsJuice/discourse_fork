@@ -78,7 +78,6 @@ fr:
       close: "Fermer"
       collapse: "Réduire le tiroir de discussion"
       confirm_flag: "Voulez-vous vraiment signaler le message de %{username} ?"
-      deleted: "Un message a été supprimé. [view]"
       hidden: "Un message a été masqué. [view]"
       delete: "Supprimer"
       edited: "modifié"
@@ -105,6 +104,8 @@ fr:
       heading: "Discussion"
       join: "Rejoindre"
       last_visit: "dernière visite"
+      summarization:
+        summarize: "Résumer"
       mention_warning:
         dismiss: "rejeter"
         invitations_sent:
@@ -153,7 +154,6 @@ fr:
       restore: "Restaurer le message supprimé"
       save: "Enregistrer"
       select: "Sélectionner"
-      silence: "Désactiver l'utilisateur"
       return_to_list: "Retour à la liste des canaux"
       scroll_to_bottom: "Défiler vers le bas"
       scroll_to_new_messages: "Voir les nouveaux messages"
@@ -254,6 +254,7 @@ fr:
         italic_text: "texte souligné"
         bold_text: "texte gras"
         code_text: "texte codé"
+        send: "Envoyer"
       quote:
         original_channel: 'Envoyé à l''origine dans le canal <a href="%{channelLink}">%{channel}</a>'
         copy_success: "Citation de discussion copiée dans le presse-papiers"
@@ -364,6 +365,21 @@ fr:
         symbols: "Symboles"
         search_placeholder: "Recherche par nom d'émoji et alias…"
         no_results: "Aucun résultat"
+      thread:
+        title: "Titre"
+        replies:
+          one: "%{count} réponse"
+          other: "%{count} réponses"
+        settings: "Paramètres"
+        last_reply: "dernière réponse"
+        notifications:
+          regular:
+            title: "Normale"
+          tracking:
+            title: "Suivre"
+        participants_other_count:
+          one: "+%{count} autre"
+          other: "+%{count} autres"
       draft_channel_screen:
         header: "Nouveau message"
         cancel: "Annuler"
@@ -408,9 +424,8 @@ fr:
       transcript:
         view: "Afficher la transcription des messages précédents"
       types:
-        reviewable_chat_message:
+        chat_reviewable_message:
           title: "Message de discussion signalé"
-          flagged_by: "Signalé par"
     keyboard_shortcuts_help:
       chat:
         title: "Discussion"
@@ -441,3 +456,7 @@ fr:
         chat_notifications_with_unread:
           one: "Notifications de discussion - %{count} notification non lue"
           other: "Notifications de discussion - %{count} notifications non lues"
+    styleguide:
+      sections:
+        chat:
+          title: Discussion

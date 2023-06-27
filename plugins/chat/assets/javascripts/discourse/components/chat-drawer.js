@@ -5,6 +5,7 @@ import { cancel, throttle } from "@ember/runloop";
 import { inject as service } from "@ember/service";
 import { htmlSafe } from "@ember/template";
 import { escapeExpression } from "discourse/lib/utilities";
+import DiscourseURL from "discourse/lib/url";
 
 export default Component.extend({
   tagName: "",
@@ -22,6 +23,7 @@ export default Component.extend({
 
   didInsertElement() {
     this._super(...arguments);
+
     if (!this.chat.userCanChat) {
       return;
     }
@@ -46,6 +48,7 @@ export default Component.extend({
 
   willDestroyElement() {
     this._super(...arguments);
+
     if (!this.chat.userCanChat) {
       return;
     }
@@ -120,7 +123,9 @@ export default Component.extend({
       return;
     }
 
-    document.querySelector(".chat-drawer").classList.add("clear-transitions");
+    document
+      .querySelector(".chat-drawer-outlet-container")
+      .classList.add("clear-transitions");
   },
 
   _clearDynamicCheckSize() {
@@ -129,7 +134,7 @@ export default Component.extend({
     }
 
     document
-      .querySelector(".chat-drawer")
+      .querySelector(".chat-drawer-outlet-container")
       .classList.remove("clear-transitions");
     this._checkSize();
   },
@@ -187,7 +192,7 @@ export default Component.extend({
     this.chatStateManager.prefersFullPage();
     this.chat.activeChannel = null;
 
-    return this.router.transitionTo(this.chatStateManager.lastKnownChatURL);
+    return DiscourseURL.routeTo(this.chatStateManager.lastKnownChatURL);
   },
 
   @action

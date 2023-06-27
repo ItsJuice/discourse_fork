@@ -4,7 +4,6 @@ import Promise from "rsvp";
 import ChatThread from "discourse/plugins/chat/discourse/models/chat-thread";
 import { tracked } from "@glimmer/tracking";
 import { TrackedObject } from "@ember-compat/tracked-built-ins";
-import { popupAjaxError } from "discourse/lib/ajax-error";
 
 /*
   The ChatThreadsManager is responsible for managing the loaded chat threads
@@ -16,7 +15,10 @@ import { popupAjaxError } from "discourse/lib/ajax-error";
 
 export default class ChatThreadsManager {
   @service chatSubscriptionsManager;
+  @service chatTrackingStateManager;
+  @service chatChannelsManager;
   @service chatApi;
+  @service chat;
   @service currentUser;
   @tracked _cached = new TrackedObject();
 
@@ -35,29 +37,63 @@ export default class ChatThreadsManager {
     }
   }
 
+  async index(channelId) {
+    return this.#loadIndex(channelId).then((result) => {
+      const threads = result.threads.map((thread) => {
+        return this.chat.activeChannel.threadsManager.store(
+          this.chat.activeChannel,
+          thread,
+          { replace: true }
+        );
+      });
+
+      this.chatTrackingStateManager.setupChannelThreadState(
+        this.chat.activeChannel,
+        result.tracking
+      );
+
+      return { threads, meta: result.meta };
+    });
+  }
+
   get threads() {
     return Object.values(this._cached);
   }
 
-  store(threadObject) {
-    let model = this.#findStale(threadObject.id);
+  store(channel, threadObject, options = {}) {
+    let model;
+
+    if (!options.replace) {
+      model = this.#findStale(threadObject.id);
+    }
 
     if (!model) {
-      model = ChatThread.create(threadObject);
+      if (threadObject instanceof ChatThread) {
+        model = threadObject;
+      } else {
+        model = ChatThread.create(channel, threadObject);
+      }
+
       this.#cache(model);
+    }
+
+    if (
+      threadObject.meta?.message_bus_last_ids?.thread_message_bus_last_id !==
+      undefined
+    ) {
+      model.threadMessageBusLastId =
+        threadObject.meta.message_bus_last_ids.thread_message_bus_last_id;
     }
 
     return model;
   }
 
   async #find(channelId, threadId) {
-    return this.chatApi
-      .thread(channelId, threadId)
-      .catch(popupAjaxError)
-      .then((thread) => {
-        this.#cache(thread);
-        return thread;
+    return this.chatApi.thread(channelId, threadId).then((result) => {
+      return this.chatChannelsManager.find(channelId).then((channel) => {
+        return channel.threadsManager.store(channel, result.thread);
       });
+    });
   }
 
   #cache(thread) {
@@ -66,5 +102,9 @@ export default class ChatThreadsManager {
 
   #findStale(id) {
     return this._cached[id];
+  }
+
+  async #loadIndex(channelId) {
+    return this.chatApi.threads(channelId);
   }
 }

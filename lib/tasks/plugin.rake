@@ -4,7 +4,7 @@ directory "plugins"
 
 desc "install all official plugins (use GIT_WRITE=1 to pull with write access)"
 task "plugin:install_all_official" do
-  skip = Set.new(%w[customer-flair lazy-yt poll])
+  skip = Set.new(%w[customer-flair poll])
 
   map = { "Canned Replies" => "https://github.com/discourse/discourse-canned-replies" }
 
@@ -168,34 +168,38 @@ task "plugin:install_gems", :plugin do |t, args|
   puts "Done"
 end
 
-def spec(plugin, parallel: false)
+def spec(plugin, parallel: false, argv: nil)
   params = []
   params << "--profile" if !parallel
   params << "--fail-fast" if ENV["RSPEC_FAILFAST"]
   params << "--seed #{ENV["RSPEC_SEED"]}" if Integer(ENV["RSPEC_SEED"], exception: false)
+  params << argv if argv
 
-  ruby = `which ruby`.strip
   # reject system specs as they are slow and need dedicated setup
   files =
     Dir.glob("./plugins/#{plugin}/spec/**/*_spec.rb").reject { |f| f.include?("spec/system/") }.sort
+
   if files.length > 0
     cmd = parallel ? "bin/turbo_rspec" : "bin/rspec"
-    sh "LOAD_PLUGINS=1 #{cmd} #{files.join(" ")} #{params.join(" ")}"
+
+    Rake::FileUtilsExt.verbose(!parallel) do
+      sh("LOAD_PLUGINS=1 #{cmd} #{files.join(" ")} #{params.join(" ")}")
+    end
   else
     abort "No specs found."
   end
 end
 
 desc "run plugin specs"
-task "plugin:spec", :plugin do |t, args|
+task "plugin:spec", %i[plugin argv] do |_, args|
   args.with_defaults(plugin: "*")
-  spec(args[:plugin])
+  spec(args[:plugin], argv: args[:argv])
 end
 
 desc "run plugin specs in parallel"
-task "plugin:turbo_spec", :plugin do |t, args|
+task "plugin:turbo_spec", %i[plugin argv] do |_, args|
   args.with_defaults(plugin: "*")
-  spec(args[:plugin], parallel: true)
+  spec(args[:plugin], parallel: true, argv: args[:argv])
 end
 
 desc "run plugin qunit tests"

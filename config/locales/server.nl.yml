@@ -189,9 +189,6 @@ nl:
       load_from_remote: "Er is een fout opgetreden bij het laden van dat bericht."
     site_settings:
       invalid_category_id: "Je hebt een categorie opgegeven die niet bestaat"
-      invalid_choice:
-        one: "Je hebt de ongeldige keuze %{name} opgegeven"
-        other: "Je hebt de ongeldige keuzes %{name} opgegeven"
       default_categories_already_selected: "Je kunt geen categorie selecteren die in een andere lijst wordt gebruikt."
       default_tags_already_selected: "Je kunt geen tag selecteren die in een andere lijst wordt gebruikt."
       s3_upload_bucket_is_required: "Je kunt uploads naar S3 niet inschakelen voordat je de 's3_upload_bucket' hebt opgegeven."
@@ -199,7 +196,6 @@ nl:
       page_publishing_requirements: "Het publiceren van pagina's kan niet worden ingeschakeld als beveiligde media is ingeschakeld."
       s3_backup_requires_s3_settings: "Je kunt S3 niet als back-uplocatie gebruiken voordat je een '%{setting_name}' hebt opgegeven."
       s3_bucket_reused: "Je kunt niet dezelfde bucket voor 's3_upload_bucket' en 's3_backup_bucket' gebruiken. Kies een andere bucket of gebruik een ander pad voor elke bucket."
-      secure_uploads_requirements: "S3-uploads moeten zijn ingeschakeld voordat beveiligde uploads worden ingeschakeld."
       share_quote_facebook_requirements: "Je moet een Facebook-app-ID instellen om het delen van citaten in te schakelen voor Facebook."
       second_factor_cannot_enforce_with_socials: "Je kunt 2FA niet afdwingen terwijl sociaal aanmelden is ingeschakeld. Je moet eerst aanmelden uitschakelen via: %{auth_provider_names}"
       second_factor_cannot_be_enforced_with_disabled_local_login: "Je kunt geen 2FA afdwingen als lokale aanmeldingen zijn uitgeschakeld."
@@ -606,22 +602,6 @@ nl:
   meta_category_description: "Discussies over deze website, de organisatie, hoe deze werkt en hoe we deze kunnen verbeteren."
   staff_category_name: "Medewerkers"
   staff_category_description: "Privécategorie voor medewerkergesprekken. Topics zijn alleen zichtbaar voor beheerders en moderators."
-  discourse_welcome_topic:
-    title: "Welkom bij onze community!"
-    body: |2
-
-      De eerste alinea van dit vastgemaakte topic is zichtbaar op je startpagina als een welkomstbericht voor alle nieuwe bezoekers. Dit is belangrijk!
-
-      **Bewerk dit** tot een korte beschrijving van je community:
-
-      - Voor wie is deze bestemd?
-      - Wat kunnen ze hier vinden?
-      - Waarom zouden ze hier moeten komen?
-      - Waar kunnen ze meer lezen (links, bronnen, enz.)?
-
-      <img src="%{base_path}/images/welcome/discourse-edit-post-animated.gif" width="508" height="106">
-
-      Mogelijk wilt je dit topic sluiten via de :wrench: voor beheer (rechtsboven en -beneden), zodat er bij een aankondiging geen antwoorden opstapelen.
   admin_quick_start_title: "LEES MIJ EERST: Snelstartgids voor beheerders"
   category:
     topic_prefix: "Over de categorie %{category}"
@@ -1104,7 +1084,7 @@ nl:
       title: "DAU/MAU"
       xaxis: "Dag"
       yaxis: "DAU/MAU"
-      description: "Aantal leden dat de afgelopen dag was aangemeld, gedeeld door het aantal leden dat de afgelopen maand was aangemeld – geeft een % terug dat 'plakkerigheid' in de community aangeeft. Het streven is >30%."
+      description: "Aantal leden dat de afgelopen dag was aangemeld, gedeeld door het aantal leden dat de afgelopen maand was aangemeld – geeft een % terug dat 'plakkerigheid' in de community aangeeft. Het streven is >20%."
     daily_engaged_users:
       title: "Dagelijkse actieve gebruikers"
       xaxis: "Dag"
@@ -1472,7 +1452,6 @@ nl:
     manifest_icon: "Afbeelding die als logo/splashafbeelding op Android wordt gebruikt. Wordt automatisch verkleind naar 512 x 512. Bij leeg laten wordt large_icon gebruikt."
     manifest_screenshots: "Schermafbeeldingen die de eigenschappen en functies van je instantie tonen op de installatiepromptpagina. Alle afbeeldingen moeten lokale uploads zijn en dezelfde afmetingen hebben."
     favicon: "Een favicon voor je website, zie <a href='https://en.wikipedia.org/wiki/Favicon' target='_blank'>https://nl.wikipedia.org/wiki/Favicon</a>.  Om goed via een CDN te werken, moet dit een png zijn. Wordt verkleind naar 32x32. Bij leeg laten wordt large_icon gebruikt."
-    apple_touch_icon: "Pictogram dat voor Apple touch-apparaten wordt gebruikt. Wordt automatisch verkleind naar 180x180. Bij leeg laten wordt large_icon gebruikt."
     opengraph_image: "Standaard opengraph-afbeelding, gebruikt wanneer de pagina geen andere geschikte afbeelding bevat. Bij leeg laten wordt large_icon gebruikt."
     twitter_summary_large_image: "Twitter-kaart 'grote samenvattingsafbeelding' (moet minimaal 280 breed en minimaal 150 hoog zijn, mag geen .svg zijn). Als dit leeg wordt gelaten, worden reguliere kaartmetagegevens gegenereerd met behulp van de opengraph_image, zolang dat niet ook een .svg is"
     notification_email: "Het Van:-e-mailadres adres dat wordt gebruikt voor het verzenden van alle essentiële systeem-e-mails. Het hier opgegeven domein moet goed ingestelde SPF-, DKIM- en reverse-PTR-records hebben om e-mails te doen aankomen."
@@ -1616,7 +1595,6 @@ nl:
     discourse_connect_overrides_profile_background: "Overschrijft achtergrond gebruikersprofiel door waarde uit DiscourseConnect-payload."
     discourse_connect_overrides_card_background: "Overschrijft achtergrond gebruikerskaart door waarde uit DiscourseConnect-payload."
     discourse_connect_not_approved_url: "Niet-goedgekeurde DiscourseConnect-accounts omleiden naar deze URL"
-    discourse_connect_allows_all_return_paths: "Het domein niet beperken voor return_paths opgegeven door DiscourseConnect (standaard moet het retourpad zich op de huidige website bevinden)"
     enable_local_logins: "Accounts op basis van een lokale gebruikersnaam en wachtwoord toestaan. WAARSCHUWING: als dit is uitgeschakeld, kun je je mogelijk niet aanmelden als je eerder niet ten minste één alternatieve aanmeldmethode hebt geconfigureerd."
     enable_local_logins_via_email: "Sta gebruikers toe te verzoeken een aanmeldlink met één klik te ontvangen via e-mail."
     allow_new_registrations: "Nieuwe gebruikersregistraties toestaan. Vink dit uit om te voorkomen dat iedereen een nieuwe account kan maken."
@@ -1720,7 +1698,6 @@ nl:
     composer_media_optimization_image_bytes_optimization_threshold: "Minimale bestandsgrootte van afbeeldingen om optimalisatie aan de clientzijde te activeren"
     composer_media_optimization_image_resize_dimensions_threshold: "Minimale afbeeldingsbreedte om vergroting/verkleining aan de clientzijde te activeren"
     composer_media_optimization_image_resize_width_target: "Afbeeldingen met een breedte groter dan `composer_media_optimization_image_dimensions_resize_threshold` worden verkleind tot deze breedte. Moet >= `composer_media_optimization_image_dimensions_resize_threshold` zijn."
-    composer_media_optimization_image_encode_quality: "JPEG-coderingskwaliteit gebruikt in het hercoderingsproces."
     min_ratio_to_crop: "Gebruikte verhouding voor het bijsnijden van hoge afbeeldingen. Voer het resultaat van breedte / hoogte in."
     simultaneous_uploads: "Maximale aantal bestanden dat naar de editor kan worden gesleept"
     default_invitee_trust_level: "Standaard vertrouwensniveau (0-4) voor uitgenodigde leden."
@@ -1892,7 +1869,6 @@ nl:
     pop3_polling_password: "Het wachtwoord voor de te pollen POP3-account voor e-mail."
     pop3_polling_delete_from_server: "Verwijder e-mails van de server. OPMERKING: als je dit uitschakelt, moet je je e-mail handmatig opschonen."
     log_mail_processing_failures: "Alle fouten van e-mailverwerking opslaan in <a href='%{base_path}/logs' target='_blank'>/logs</a>"
-    email_in: 'Gebruikers mogen nieuwe topics maken via e-mail (vereist handmatige of POP3-polling). Configureer de adressen in het tabblad ''Instellingen'' van elke categorie.'
     email_in_min_trust: "Het minimale vertrouwensniveau dat een gebruiker moet hebben om nieuwe topics te kunnen plaatsen via e-mail."
     email_in_authserv_id: "De ID van de service die verificatiecontroles op inkomende e-mails uitvoert. Zie <a href='https://meta.discourse.org/t/134358'>https://meta.discourse.org/t/134358</a> voor instructies over het configureren hiervan."
     email_in_spam_header: "De e-mailheader voor het detecteren van spam."
@@ -1978,7 +1954,6 @@ nl:
     auto_handle_queued_age: "Records die dit aantal dagen op beoordeling wachten automatisch verwijderen. Markeringen worden genegeerd. Berichten en gebruikers in de wachtrij worden geweigerd. Stel dit in op 0 om deze functie uit te schakelen."
     penalty_step_hours: "Standaardstraffen bij demping of schorsing van gebruikers in uren. Bij de eerste overtreding wordt standaard de eerste waarde gebruikt, bij de tweede overtreding de tweede waarde, enz."
     svg_icon_subset: "Extra FontAwesome 5-pictogrammen toevoegen die je in je assets wilt opnemen. Gebruik het voorvoegsel 'fa-' voor effen pictogrammen, 'far-' voor normale pictogrammen en 'fab-' voor merkpictogrammen."
-    max_prints_per_hour_per_user: "Maximale aantal /print-pagina-impressies (stel dit in op 0 om uit te schakelen)"
     full_name_required: "Volledige naam is een verplicht veld van een gebruikersprofiel."
     enable_names: "Volledige naam van gebruiker weergeven op profiel, gebruikerskaart en e-mails. Schakel dit uit om de volledige naam overal te verbergen."
     display_name_on_posts: "Volledige naam van een gebruiker weergeven bij berichten, naast de @gebruikersnaam."
@@ -1999,11 +1974,8 @@ nl:
     allowed_href_schemes: "Toegestane schema's in links, naast http en https."
     embed_post_limit: "Maximale aantal in te bedden berichten."
     embed_username_required: "De gebruikersnaam voor het maken van topics is vereist."
-    notify_about_flags_after: "Als er na dit aantal uren markeringen zijn die nog niet zijn afgehandeld, een privébericht naar moderators sturen. Stel dit in op 0 om uit te schakelen."
-    show_create_topics_notice: "Als de website minder dan 5 publieke topics heeft, een melding weergeven waarin beheerders wordt gevraagd een aantal topics te maken."
     delete_drafts_older_than_n_days: "Concepten ouder dan (n) dagen verwijderen."
     delete_merged_stub_topics_after_days: "Aantal dagen dat moet worden gewacht voordat volledig samengevoegde stubtopics automatisch worden verwijderd. Stel dit in op 0 om stubtopics niet te verwijderen."
-    bootstrap_mode_min_users: "Minimale aantal vereiste gebruikers om bootstrapmodus uit te schakelen (stel dit in op 0 om uit te schakelen)"
     prevent_anons_from_downloading_files: "Voorkom dat anonieme gebruikers bijlagen downloaden."
     secure_uploads: 'Beperkt de toegang tot ALLE uploads (afbeeldingen, video, audio, tekst, pdf''s, zips en andere). Als ''aanmelding vereist'' is ingeschakeld, hebben alleen aangemelde gebruikers toegang tot uploads. Anders is de toegang alleen beperkt voor media-uploads in privéberichten en privécategorieën. WAARSCHUWING: deze instelling is complex en vereist diepgaande beheerkennis. Zie <a target="_blank" href="https://meta.discourse.org/t/-/140017">het onderwerp Veilige uploads op Meta</a> voor meer informatie.'
     secure_uploads_allow_embed_images_in_emails: "Staat het insluiten van beveiligde afbeeldingen toe die normaal gesproken zouden worden geredigeerd in e-mails, als hun grootte kleiner is dan de instelling 'veilige uploads max. afbeeldingsgrootte insluiten in e-mail kb'."
@@ -2073,7 +2045,6 @@ nl:
     revoke_api_keys_days: "Aantal dagen voordat een niet-gebruikte API-sleutel van een gebruiker automatisch wordt ingetrokken (0 voor nooit)"
     allow_user_api_keys: "Genereren van API-sleutels van gebruiker toestaan"
     allow_user_api_key_scopes: "Lijst van toegestane scopes voor API-sleutels van gebruiker"
-    min_trust_level_for_user_api_key: "Vereiste vertrouwensniveau voor genereren van API-sleutels van gebruiker"
     allowed_user_api_auth_redirects: "Toegestane URL voor verificatie bij omleiden voor API-sleutels van gebruiker. Het jokerteken * kan worden gebruikt om een deel ervan te laten overeenkomen (bv. www.example.com/*)."
     allowed_user_api_push_urls: "Toegestane URL's voor server-push naar gebruikers-API"
     expire_user_api_keys_days: "Aantal dagen voordat een API-sleutel van een gebruiker automatisch verloopt (0 voor nooit)"
@@ -2105,7 +2076,6 @@ nl:
     enable_sitemap: "Genereer een sitemap voor je website en neem deze op in het bestand robots.txt."
     sitemap_page_size: "Aantal URL's om op te nemen in elke sitemappagina. Maximaal 50.000"
     enable_user_status: "(experimenteel) Sta gebruikers toe om een aangepast statusbericht in te stellen (emoji + beschrijving)."
-    enable_user_tips: "(experimenteel) Schakel nieuwe gebruikerstips in die belangrijke functies beschrijven"
     short_title: "De korte titel wordt gebruikt op het startscherm van de gebruiker, de starter, of andere plaatsen waar ruimte beperkt kan zijn. Beperk de naam tot 12 tekens."
     dashboard_hidden_reports: "Toestaan dat de opgegeven rapporten worden verborgen op het dashboard."
     dashboard_visible_tabs: "Kiezen welke dashboardtabbladen zichtbaar zijn."
@@ -2122,8 +2092,6 @@ nl:
     suggest_weekends_in_date_pickers: "Neem weekenden (zaterdag en zondag) op in suggesties voor datumkiezers (schakel dit uit als je Discourse alleen op weekdagen gebruikt, maandag t/m vrijdag)."
     splash_screen: "Geeft een tijdelijk laadscherm weer terwijl website-items worden geladen"
     navigation_menu: "Bepaal welk navigatiemenu u wilt gebruiken. Zijbalk- en kopnavigatie kunnen door gebruikers worden aangepast. Een legacyoptie is beschikbaar voor terugwaartse compatibiliteit."
-    default_sidebar_categories: "Geselecteerde categorieën worden standaard weergegeven onder de sectie Categorieën van de zijbalk."
-    default_sidebar_tags: "Geselecteerde tags worden standaard weergegeven onder de sectie Tags van de zijbalk."
     enable_experimental_hashtag_autocomplete: "EXPERIMENTEEL: gebruik het nieuwe automatische #hashtag-aanvulsysteem voor categorieën en tags dat het geselecteerde item anders weergeeft en de zoekfunctie verbetert"
     errors:
       invalid_css_color: "Ongeldige kleur. Voer een kleurnaam of hexadecimale waarde in."
@@ -2159,7 +2127,6 @@ nl:
       staged_users_disabled: "Je moet eerst 'gefaseerde gebruikers' inschakelen voordat je deze instelling inschakelt."
       reply_by_email_disabled: "Je moet eerst 'reply by email' inschakelen voordat je deze instelling inschakelt."
       discourse_connect_url_is_empty: "Je moet een 'DiscourseConnect-URL' instellen voordat je deze instelling inschakelt."
-      discourse_connect_invite_only: "Je kunt DiscourseConnect en alleen uitnodiging niet tegelijk inschakelen."
       enable_local_logins_disabled: "Je moet eerst 'enable local logins' inschakelen voordat je deze instelling inschakelt."
       min_username_length_exists: "Je kunt de minimale gebruikersnaamlengte niet hoger instellen dan de kortste gebruikersnaam (%{username})."
       min_username_length_range: "Je kunt het minimum niet hoger instellen dan het maximum."
@@ -3144,15 +3111,6 @@ nl:
       title: "Externe afbeeldingen downloaden uitgeschakeld"
       subject_template: "Het downloaden van externe afbeeldingen is uitgeschakeld"
       text_body_template: "De instelling 'download_remote_images_to_local' is uitgeschakeld omdat de schijfruimtelimiet van 'download_remote_images_threshold' is bereikt."
-    dashboard_problems:
-      title: "Dashboardproblemen"
-      subject_template: "Nieuw advies op je websitedashboard"
-      text_body_template: |
-        We hebben nieuw advies en aanbevelingen voor je op basis van je huidige website-instellingen.
-
-        [Ga naar het websitedashboard](%{base_url}/admin) om het te bekijken.
-
-        Als er niets te zien is op je dashboard, kan het zijn dat een ander medewerker al iets heeft gedaan met dit advies. Een lijst met medewerkeracties is te vinden in je [medewerkeractielogs](%{base_url}/admin/logs/medewerkerf_action_logs).
     new_user_of_the_month:
       title: "Je bent een nieuwe gebruiker van de maand!"
       subject_template: "Je bent een nieuwe gebruiker van de maand!"
@@ -3685,13 +3643,6 @@ nl:
   offline:
     title: "Kan app niet laden"
     offline_page_message: "Het lijkt erop dat je offline bent! Controleer je netwerkverbinding en probeer het opnieuw."
-  login_required:
-    welcome_message: |
-      ## [Welkom bij %{title}](#welkom)
-      Een account is vereist. Maak een account of meld je aan om verder te gaan.
-    welcome_message_invite_only: |
-      ## [Welkom bij %{title}](#welkom)
-      Een account is vereist. Vraag een bestaand lid om een uitnodiging of meld je aan om verder te gaan.
   upload:
     edit_reason: "lokale kopieën van afbeeldingen gedownload"
     unauthorized: "Sorry, het bestand dat je probeert te uploaden is niet toegestaan (toegestane extensies: %{authorized_extensions})."

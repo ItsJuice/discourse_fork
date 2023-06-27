@@ -5,6 +5,8 @@ class ThemeField < ActiveRecord::Base
   has_one :javascript_cache, dependent: :destroy
   has_one :upload_reference, as: :target, dependent: :destroy
 
+  validates :value, { length: { maximum: 1024**2 } }
+
   after_save do
     if self.type_id == ThemeField.types[:theme_upload_var] && saved_change_to_upload_id?
       UploadReference.ensure_exist!(upload_ids: [self.upload_id], target: self)
@@ -189,13 +191,8 @@ class ThemeField < ActiveRecord::Base
       end
 
     if Discourse.store.external?
-      external_copy =
-        begin
-          Discourse.store.download(upload)
-        rescue StandardError
-          nil
-        end
-      path = external_copy.try(:path)
+      external_copy = Discourse.store.download_safe(upload)
+      path = external_copy&.path
     else
       path = Discourse.store.path_for(upload)
     end

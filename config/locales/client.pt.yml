@@ -185,12 +185,6 @@ pt:
     software_update_prompt:
       message: "Atualizámos este site, <span>por favor recarregue a página</span> ou poderá experienciar um comportamento inesperado."
       dismiss: "Marcar como visto"
-    bootstrap_mode_enabled:
-      one: "Para que o início do teu Site seja o mais simples possível, estás agora em modo de inicialização simples. A todos os novos utilizadores será concedido o Nível de Confiança 1 e o resumo por e-mail enviado diariamente estará ativado. Isto será automaticamente desligado quando %{count} utilizador se tiver juntado ao fórum."
-      other: "Para que o início do teu Site seja o mais simples possível, estás agora em modo de inicialização simples. A todos os novos utilizadores será concedido o Nível de Confiança 1 e o resumo por e-mail enviado diariamente estará ativado. Isto será automaticamente desligado quando %{count} utilizadores se tiverem juntado ao fórum."
-    bootstrap_mode_disabled: "O modo de inicialização simples será desactivado em 24 horas."
-    bootstrap_invite_button_title: "Enviar Convites"
-    bootstrap_wizard_link_title: "Concluir assistente de configuração"
     themes:
       default_description: "Predefinição"
       broken_theme_alert: "Seu site pode não funcionar porque um tema ou componente têm erros."
@@ -336,7 +330,6 @@ pt:
       remove_confirmation: "Tem a certeza que pretende eliminar este rascunho?"
       new_topic: "Novo rascunho de tópico"
       abandon:
-        confirm: "Tem um rascunho em andamento neste tópico. O que gostaria de fazer com ele?"
         yes_value: "Descartar"
         no_value: "Retomar a edição"
     topic_count_categories:
@@ -1126,13 +1119,6 @@ pt:
       save_to_change_theme: 'O tema será atualizado após clicar em "%{save_text}"'
       home: "Página Principal Por Defeito"
       staged: "Não Confirmado"
-      staff_counters:
-        flags_given: "denúncias úteis"
-        flagged_posts: "publicações sinalizadas"
-        deleted_posts: "mensagens eliminadas"
-        suspensions: "suspensões"
-        warnings_received: "avisos"
-        rejected_posts: "mensagens rejeitadas"
       messages:
         all: "todas as caixas de entrada"
         inbox: "Caixa de Entrada"
@@ -1167,7 +1153,6 @@ pt:
         tags: "Etiquetas"
         interface: "Interface"
         apps: "Aplicações"
-        sidebar: "Barra Lateral"
       change_password:
         success: "(email enviado)"
         in_progress: "(a enviar email)"
@@ -1181,11 +1166,9 @@ pt:
         title: "Códigos de Reserva para Autenticação em Dois Passos"
         regenerate: "Regenerar"
         disable: "Desativar"
-        enable: "Ativar"
-        enable_long: "Ativar códigos de reserva"
         manage:
-          one: "Gerir códigos de reserva. Resta <strong>%{count}</strong> código de reserva."
-          other: "Gerir códigos de reserva. Restam <strong>%{count}</strong> códigos de reserva."
+          one: "Resta <strong>%{count}</strong> código de reserva."
+          other: "Restam <strong>%{count}</strong> códigos de reserva."
         copy_to_clipboard: "Copiar para a Área de Transferência"
         copy_to_clipboard_error: "Erro a copiar dados para a Área de Transferência"
         copied_to_clipboard: "Copiado para a Área de Transferência"
@@ -1662,7 +1645,6 @@ pt:
       intro: "Olá! Parece que está a gostar da conversa, mas ainda não tem uma conta."
     summary:
       enabled_description: "Está a ver um resumo deste tópico: as respostas mais interessantes são determinadas pela comunidade."
-      enable: "Resumir Este Tópico"
       disable: "Mostrar Todas As Publicações"
       short_label: "Resumir"
       short_title: "Mostrar um resumo deste tópico: as discussões mais interessantes conforme determinado pela comunidade"
@@ -2310,7 +2292,7 @@ pt:
         top: "Não existem tópicos recentes."
         educate:
           new: '<p>Os seus novos tópicos irão aparecer aqui. Por defeito, os tópicos são considerados novos e mostrarão o indicador <span class="badge new-topic badge-notification" style="vertical-align:middle;line-height:inherit;"></span> caso tenham sido criados nos últimos 2 dias.</p><p>Pode alterar isto nas suas <a href="%{userPrefsUrl}"> preferências</a>.</p>'
-          unread: "<p>As suas publicações não lidas aparecem aqui.</p><p>Por defeito, tópicos são considerados não lidos e mostrarão contadores de não lidos <span class=\"badge unread-posts badge-notification\">1</span> se você:</p><ul><li>Criou o tópico</li><li>Respondeu ao tópico</li><li>Leu o tópico durante mais de 4 minutos</li></ul><p>Ou marcou explicitamente o tópico como Seguido ou Vigiado através do \U0001F514 em cada tópico.</p><p>Visite as suas <a href=\"%{userPrefsUrl}\">preferências</a> para alterar isto.</p>"
+          unread: "<p>As suas publicações não lidas aparecem aqui.</p><p>Por defeito, tópicos são considerados não lidos e mostrarão contadores de não lidos <span class=\"badge unread-posts badge-notification\">1</span> se você:</p><ul><li>Criou o tópico</li><li>Respondeu ao tópico</li><li>Leu o tópico durante mais de 5 minutos</li></ul><p>Ou marcou explicitamente o tópico como Seguido ou Vigiado através do \U0001F514 em cada tópico.</p><p>Visite as suas <a href=\"%{userPrefsUrl}\">preferências</a> para alterar isto.</p>"
       bottom:
         latest: "Não existem mais tópicos recentes."
         posted: "Não existem mais tópicos publicados."
@@ -3304,7 +3286,6 @@ pt:
         one: "Ganhou este distintivo %{count} vez"
         other: "Ganhou este crachá %{count} vezes"
       granted_on: "Concedido %{date}"
-      others_count: "Outros com este crachá (%{count})"
       title: Crachás
       allow_title: "Pode usar este crachá como título"
       multiple_grant: "Você pode ganhar isto várias vezes"
@@ -3479,13 +3460,18 @@ pt:
         other: "%{count} novos"
       more: "Mais"
       all_categories: "Todas as categorias"
+      categories_form_modal:
+        save: "Guardar"
       sections:
         custom:
           save: "Guardar"
           delete: "Eliminar"
           links:
-            icon: "Ícone"
-            name: "Nome"
+            reset: "Restaurar ao padrão"
+            icon:
+              label: "Ícone"
+            name:
+              label: "Nome"
         about:
           header_link_text: "Sobre"
         messages:
@@ -3511,8 +3497,8 @@ pt:
               content: "Administrador"
             badges:
               content: "Crachás"
-            everything:
-              content: "Tudo"
+            topics:
+              content: "Tópicos"
             faq:
               content: "FAQ"
             groups:
@@ -4294,11 +4280,6 @@ pt:
         actions:
           block: "Bloquear"
           flag: "Denunciar"
-        action_descriptions:
-          block: "Impede que posts que contenham estas palavras sejam publicados. O usuário irá receber uma mensagem de erro ao tentar enviar o seu post."
-          censor: "Permite posts que contenham estas palavras, mas substitui-as por caracteres que ocultam as palavras censuradas."
-          require_approval: "As publicações que contenham estas palavras terão de ser aprovadas pelo pessoal antes de poderem ser vistas."
-          flag: "Permite posts que contenham estas palavras, mas sinaliza-as como inapropriadas para que os moderadores as possam rever."
         form:
           link_placeholder: "https://example.com"
           add: "Adicionar"
@@ -4335,6 +4316,8 @@ pt:
               key: "mínimo"
             maximum:
               key: "máximo"
+            type:
+              key: "tipo"
       impersonate:
         title: "Personificar"
         help: "Utilize este ferramenta de forma a personificar uma conta de utilizador para fins de depuração. Terá de encerrar a sessão assim que terminar."

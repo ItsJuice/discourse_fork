@@ -14,6 +14,7 @@ import PostFlag from "discourse/lib/flag-targets/post-flag";
 const SCROLL_DELAY = 500;
 
 const TopicRoute = DiscourseRoute.extend({
+  composer: service(),
   screenTrack: service(),
 
   scheduledReplace: null,
@@ -324,8 +325,7 @@ const TopicRoute = DiscourseRoute.extend({
   deactivate() {
     this._super(...arguments);
 
-    this.searchService.set("searchContext", null);
-    this.controllerFor("user-card").set("visible", false);
+    this.searchService.searchContext = null;
 
     const topicController = this.controllerFor("topic");
     const postStream = topicController.get("model.postStream");
@@ -333,7 +333,7 @@ const TopicRoute = DiscourseRoute.extend({
     postStream.cancelFilter();
 
     topicController.set("multiSelect", false);
-    this.controllerFor("composer").set("topic", null);
+    this.composer.set("topic", null);
     this.screenTrack.stop();
 
     this.appEvents.trigger("header:hide-topic");
@@ -351,13 +351,13 @@ const TopicRoute = DiscourseRoute.extend({
       firstPostExpanded: false,
     });
 
-    this.searchService.set("searchContext", model.get("searchContext"));
+    this.searchService.searchContext = model.get("searchContext");
 
     // close the multi select when switching topics
     controller.set("multiSelect", false);
     controller.get("quoteState").clear();
 
-    this.controllerFor("composer").set("topic", model);
+    this.composer.set("topic", model);
     this.topicTrackingState.trackIncoming("all");
 
     // We reset screen tracking every time a topic is entered
